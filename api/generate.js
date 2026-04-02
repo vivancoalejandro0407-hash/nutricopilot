@@ -97,7 +97,7 @@ Devuelve SOLO el JSON válido con los campos solicitados.
 
     const resp = await anthropic.messages.create({
       model: "claude-sonnet-4-5",
-      max_tokens: 1700,
+      max_tokens: 4096,
       temperature: 0.7,
       system,
       messages: [{ role: "user", content: userPrompt }]
