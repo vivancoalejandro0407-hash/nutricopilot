@@ -1,7 +1,9 @@
 {
   "name": "nutricopilot",
   "version": "1.0.0",
+  "description": "Generador de planes nutricionales con IA",
+  "main": "api/generate.js",
   "dependencies": {
-    "openai": "^4.0.0"
+    "@anthropic-ai/sdk": "^0.20.0"
   }
 }
