@@ -186,4 +186,85 @@ Si quieres, dime cómo te sientes y lo ajusto.`;
       if (i < dias.length - 1) planHTML += '<div class="divider" style="margin:16px 0"></div>';
     });
     document.getElementById('plan-comidas').innerHTML = planHTML;
+        document.getElementById('plan-comidas').innerHTML = planHTML;
+            // ── LISTA DEL SÚPER ──
+    const s = data.lista_super || {};
+    const catIcons = { proteinas:'🥩', carbohidratos:'🌾', frutas_verduras:'🥦', lacteos:'🥛', extras:'🫙' };
 
+    let shopHTML = '<div class="shop-cats">';
+    for (const [cat, items] of Object.entries(s)) {
+      const safeItems = Array.isArray(items) ? items : [];
+      if (!safeItems.length) continue;
+
+      const label = cat.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+
+      shopHTML += `<div class="shop-cat">
+        <div class="shop-cat-title">${catIcons[cat] || '•'} ${label}</div>
+        <ul>${safeItems.map(i => `<li>${i}</li>`).join('')}</ul>
+      </div>`;
+    }
+    shopHTML += '</div>';
+
+    document.getElementById('lista-super').innerHTML = shopHTML;
+
+    // ── TIPS ──
+    const tips = Array.isArray(data.tips) ? data.tips : [];
+    document.getElementById('tips-list').innerHTML = tips.map((t, i) =>
+      `<div class="tip-item">
+        <div class="tip-num">${i + 1}</div>
+        <div class="tip-text">${t}</div>
+      </div>`
+    ).join('');
+
+    // ── WHATSAPP ──
+    document.getElementById('wa-msg').textContent = data.mensaje_whatsapp || '';
+    window._waMsgText = data.mensaje_whatsapp || '';
+
+    // mostrar resultados
+    document.getElementById('empty-state').style.display = 'none';
+    document.getElementById('results').classList.add('visible');
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // ── decide demo vs IA ──
+  let data;
+  try {
+    if (window.__modo === 'admin') {
+      const res = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombre, edad, peso, estatura, sexo,
+          objetivo, actividad, presupuesto, restricciones,
+          calorias, imc
+        })
+      });
+
+      if (!res.ok) {
+        const txt = await res.text().catch(() => '');
+        throw new Error(`IA HTTP ${res.status} ${txt ? '- ' + txt.slice(0,200) : ''}`);
+      }
+
+      data = await res.json();
+      if (data?.error) throw new Error(data.error);
+    } else {
+      // PRUEBA sin IA
+      data = generarPlanDemoLocal();
+    }
+
+    // valida mínimo para no romper render
+    if (!data?.macros || !data?.plan_semanal || !data?.lista_super) {
+      throw new Error('IA devolvió JSON incompleto.');
+    }
+
+  } catch (err) {
+    console.warn('Fallback a demo:', err);
+    showToast('⚠️ No se pudo usar IA. Usando demo local...');
+    data = generarPlanDemoLocal();
+  }
+
+  renderData(data);
+  document.getElementById('loading').classList.remove('active');
+}
+
+        
