@@ -1,20 +1,17 @@
-{
+ {
   "version": 2,
   "builds": [
     {
       "src": "index.html",
       "use": "@vercel/static"
+    },
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": "/index.html" }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
-      ]
-    }
+    { "src": "/(.*)", "dest": "/index.html" },
+    { "src": "/api/(.*)", "dest": "/api/$1" }
   ]
 }
