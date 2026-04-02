@@ -1100,19 +1100,6 @@ function validar() {
   return true;
 }
 
-async function generarPlan() {
-  if (!validar()) return;
-
-  const nombre    = document.getElementById('nombre').value.trim();
-  const edad      = parseInt(document.getElementById('edad').value);
-  const peso      = parseFloat(document.getElementById('peso').value);
-  const estatura  = parseFloat(document.getElementById('estatura').value);
-  const sexo      = document.getElementById('sexo').value;
-  const objetivo  = document.getElementById('objetivo').value;
-  const actividad = document.getElementById('actividad').value;
-  const presupuesto  = document.getElementById('presupuesto').value;
-  const restricciones = document.getElementById('restricciones').value.trim();
-
   // Calcular localmente para pasarlos al prompt
   const imc      = calcIMC(peso, estatura);
   const tmb      = calcTMB(peso, estatura, edad, sexo);
@@ -1129,10 +1116,31 @@ async function generarPlan() {
       body: JSON.stringify({ nombre, edad, peso, estatura, sexo, objetivo, actividad, presupuesto, restricciones, calorias, imc })
     });
 
-    const data = await res.json();
+    // 1. Validamos que el servidor respondió bien (200 OK)
+    if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`Error del servidor: ${errorText}`);
+    }
+
+    // 2. CAMBIO CLAVE: Leemos como texto primero para asegurar que el paquete llegó completo
+    const text = await res.text();
+    
+    // 3. Convertimos a JSON manualmente
+    const data = JSON.parse(text);
+
     if (data.error) throw new Error(data.error);
 
+    // 4. Quitamos el cargando y mostramos los resultados
     document.getElementById('loading').classList.remove('active');
+    
+    // Aquí llamas a tu función que llena las tablas con los datos de 'data'
+    actualizarInterfazConPlan(data); 
+
+  } catch (error) {
+    console.error('Error detallado:', error);
+    document.getElementById('loading').classList.remove('active');
+    alert("La IA tardó demasiado o hubo un error: " + error.message);
+  }
 
     // ── MACROS ──
     const m = data.macros;
