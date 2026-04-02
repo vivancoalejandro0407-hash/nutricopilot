@@ -3,37 +3,38 @@
     return res.status(405).json({ error: 'Método no permitido' });
   }
 
+  // Desestructuración con valores por defecto
   const {
-    nombre,
-    edad,
-    peso,
-    estatura,
-    sexo,
-    objetivo,
-    actividad,
-    presupuesto,
-    restricciones,
-    calorias,
-    imc
-  } = req.body;
+    nombre = '',
+    edad = '',
+    peso = '',
+    estatura = '',
+    sexo = '',
+    objetivo = 'mantener',
+    actividad = 'medio',
+    presupuesto = 'medio',
+    restricciones = '',
+    calorias = '',
+    imc = ''
+  } = req.body || {};
 
   const objetivoLabel = {
     bajar: 'bajar grasa corporal',
     muscular: 'ganar masa muscular',
     mantener: 'mantener peso'
-  }[objetivo];
+  }[objetivo] || objetivo;
 
   const actividadLabel = {
     bajo: 'sedentario',
     medio: 'actividad moderada',
     alto: 'actividad alta'
-  }[actividad];
+  }[actividad] || actividad;
 
   const presupuestoLabel = {
     bajo: 'bajo',
     medio: 'medio',
     alto: 'alto'
-  }[presupuesto];
+  }[presupuesto] || presupuesto;
 
   const prompt = `Genera un plan nutricional semanal profesional para:
 Nombre: ${nombre}
