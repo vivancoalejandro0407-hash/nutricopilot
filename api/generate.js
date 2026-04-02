@@ -96,7 +96,7 @@ Devuelve SOLO el JSON válido con los campos solicitados.
     `.trim();
 
     const resp = await anthropic.messages.create({
-      model: "model: "claude-sonnet-4-5",
+      model: "claude-sonnet-4-5",
       max_tokens: 1700,
       temperature: 0.7,
       system,
