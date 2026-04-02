@@ -12,27 +12,21 @@ function extractJson(text) {
   return JSON.parse(match[0]);
 }
 
-// 🧠 ICC controlado por backend
+// 🧠 ICC backend (blindado)
 function interpretarICC(icc, sexo) {
   if (sexo === "Mujer") {
-    if (icc < 0.80) return { nivel: "bajo", mensaje: "Riesgo bajo" };
-    if (icc < 0.85) return { nivel: "moderado", mensaje: "Riesgo moderado" };
-    return {
-      nivel: "alto",
-      mensaje: "Riesgo aumentado de acumulación abdominal. Se recomienda mejorar hábitos y seguimiento."
-    };
+    if (icc < 0.80) return { nivel: "bajo", color: "verde" };
+    if (icc < 0.85) return { nivel: "moderado", color: "amarillo" };
+    return { nivel: "alto", color: "rojo" };
   }
 
   if (sexo === "Hombre") {
-    if (icc < 0.90) return { nivel: "bajo", mensaje: "Riesgo bajo" };
-    if (icc < 1.00) return { nivel: "moderado", mensaje: "Riesgo moderado" };
-    return {
-      nivel: "alto",
-      mensaje: "Riesgo aumentado de acumulación abdominal. Se recomienda mejorar hábitos y seguimiento."
-    };
+    if (icc < 0.90) return { nivel: "bajo", color: "verde" };
+    if (icc < 1.00) return { nivel: "moderado", color: "amarillo" };
+    return { nivel: "alto", color: "rojo" };
   }
 
-  return null;
+  return { nivel: "desconocido", color: "gris" };
 }
 
 module.exports = async (req, res) => {
@@ -68,66 +62,68 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: "Payload incompleto." });
     }
 
-    // 🔒 BLINDAR CALORÍAS
+    // 🔒 CALORÍAS BLINDADAS
     let caloriasAjustadas = calorias;
 
     if (sexo === "Mujer" && calorias < 1200) caloriasAjustadas = 1200;
     if (sexo === "Hombre" && calorias < 1400) caloriasAjustadas = 1400;
 
     const shares = sharesForObjective(objetivo);
-    const proteina = Math.round((caloriasAjustadas * shares.p) / 4);
+
+    const proteina = Math.max(
+      Math.round((caloriasAjustadas * shares.p) / 4),
+      Math.round(peso * 1.4) // 💪 mínimo clínico
+    );
+
     const carbohidratos = Math.round((caloriasAjustadas * shares.c) / 4);
     const grasas = Math.round((caloriasAjustadas * shares.f) / 9);
 
     const anthropic = new Anthropic({ apiKey });
 
-    // 🧠 SYSTEM PROMPT PRO
+    // 🧠 PROMPT PRO
     const system = `
 Eres un nutriólogo clínico profesional especializado en población mexicana.
 
-Generas planes nutricionales:
-- Clínicamente coherentes
-- Económicos y realistas en México
-- Sin alarmismo
-- Claros y prácticos
+OBJETIVO:
+Generar planes nutricionales realistas, económicos y clínicamente coherentes.
 
-REGLAS OBLIGATORIAS:
+REGLAS CRÍTICAS:
 
-1. INTERPRETACIÓN DE RIESGO
-- PROHIBIDO usar: "muy alto", "urgente", "extremo", "intervención urgente", "derivar".
+1. RIESGO
+- PROHIBIDO usar: "muy alto", "urgente", "extremo", "derivar".
 - SOLO usar: "bajo", "moderado", "alto".
-- NO hacer diagnósticos médicos.
-- Usar lenguaje como:
-  "Se recomienda mejorar hábitos y seguimiento".
+- NO diagnosticar enfermedades.
+- Usar lenguaje prudente.
 
 2. CALORÍAS
-- Las calorías ya están validadas clínicamente.
-- NO puedes modificarlas bajo ninguna circunstancia.
-- Debes reflejarlas EXACTAMENTE en el JSON.
+- Ya están validadas clínicamente.
+- NO puedes modificarlas.
+- Deben coincidir EXACTAMENTE.
 
 3. PROTEÍNA
-- Debe ser suficiente para preservar masa muscular (mínimo 1.4 g/kg).
+- Mínimo 1.4 g por kg de peso.
 
-4. PRESUPUESTO (CRÍTICO)
-Si es bajo:
-- Usar: huevo, pollo, atún, sardina, frijoles, lentejas, arroz, avena, tortillas.
-- Evitar: salmón, quinoa, frutos caros.
+4. PRESUPUESTO BAJO
+- Usar alimentos mexicanos accesibles:
+  huevo, pollo, atún, sardina, frijoles, lentejas, arroz, avena, tortillas.
+- Evitar alimentos caros.
 
-5. CALIDAD DE ALIMENTOS
-- Priorizar alimentos naturales.
-- Evitar ultraprocesados (galletas, dulces, azúcar).
-- Si aparecen, que sea ocasional y en poca cantidad.
+5. CALIDAD ALIMENTARIA
+- PROHIBIDO uso frecuente de:
+  galletas, azúcar añadida, miel libre.
+- Solo ocasional y con porción específica.
 
-6. PLAN
-- 5 comidas por día
-- Fácil de preparar
-- Porciones claras
+6. VARIEDAD (MUY IMPORTANTE)
+- Cada día debe ser diferente.
+- NO repetir comidas.
+- Variar proteínas, carbohidratos y preparaciones.
 
-7. TONO
-- Profesional
-- Claro
-- Motivador
-- SIN asustar
+7. COLACIONES
+- Basadas en proteína + fibra.
+
+8. TONO
+- Profesional, claro, motivador.
+- SIN alarmismo.
 
 Devuelve SOLO JSON válido.
 `.trim();
@@ -200,12 +196,10 @@ Devuelve SOLO JSON válido.
 
     const data = extractJson(text);
 
-    // 🔒 VALIDACIÓN FINAL CALORÍAS
-    if (data.macros?.calorias !== caloriasAjustadas) {
-      data.macros.calorias = caloriasAjustadas;
-    }
+    // 🔒 VALIDACIÓN FINAL
+    data.macros.calorias = caloriasAjustadas;
 
-    // 🧠 ICC FINAL
+    // 🧠 ICC FINAL (BLINDADO)
     let iccData = null;
 
     if (cintura && cadera) {
@@ -214,8 +208,13 @@ Devuelve SOLO JSON válido.
 
       iccData = {
         valor: icc.toFixed(2),
-        nivel: interpretacion?.nivel,
-        mensaje: interpretacion?.mensaje
+        nivel: interpretacion.nivel,
+        color: interpretacion.color,
+        mensaje: interpretacion.nivel === "alto"
+          ? "Se recomienda mejorar hábitos y dar seguimiento."
+          : interpretacion.nivel === "moderado"
+          ? "Se recomienda mantener y mejorar hábitos."
+          : "Buen control de distribución de grasa corporal."
       };
     }
 
