@@ -1,11 +1,945 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NutriCopilot — Planes Nutricionales en 1 Minuto</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sage: #7a9e7e;
+    --sage-light: #a8c5ac;
+    --sage-pale: #edf4ee;
+    --cream: #faf8f3;
+    --warm-white: #ffffff;
+    --clay: #c9856a;
+    --clay-light: #f0d5cb;
+    --charcoal: #2b2d2e;
+    --mid-gray: #6b7280;
+    --light-gray: #e8eceb;
+    --card-shadow: 0 4px 24px rgba(43,45,46,0.08);
+    --card-shadow-hover: 0 8px 40px rgba(43,45,46,0.14);
+    --radius: 18px;
+    --radius-sm: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ══ LOGIN EN CARD ══ */
+  #login-panel { display: block; }
+  #form-panel { display: none; }
+  .login-card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.15rem; color: var(--charcoal); margin-bottom: 4px;
+  }
+  .login-card-sub { font-size: 0.82rem; color: var(--mid-gray); margin-bottom: 22px; }
+  .login-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .login-error {
+    background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c;
+    border-radius: 8px; padding: 10px 14px; font-size: 0.84rem;
+    margin-bottom: 14px; display: none;
+  }
+  .login-error.show { display: block; }
+  .btn-login {
+    width: 100%; padding: 13px;
+    background: linear-gradient(135deg, var(--sage), #5f8562);
+    color: white; font-family: 'DM Sans', sans-serif;
+    font-weight: 700; font-size: 0.95rem;
+    border: none; border-radius: var(--radius-sm); cursor: pointer;
+    box-shadow: 0 4px 16px rgba(122,158,126,0.4);
+    transition: transform 0.22s, box-shadow 0.22s; margin-top: 4px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-login:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(122,158,126,0.5); }
+  .login-hint {
+    margin-top: 16px; font-size: 0.82rem; color: var(--charcoal);
+    background: var(--sage-pale); border: 1.5px solid var(--sage-light);
+    border-radius: 8px; padding: 12px 16px; text-align: center; line-height: 1.7;
+  }
+  .login-hint strong { color: var(--sage); font-size: 0.88rem; }
+  .login-lock-icon {
+    width: 48px; height: 48px; border-radius: 14px;
+    background: var(--sage-pale);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; margin-bottom: 16px;
+  }
+
+  /* ══ DEMO BANNER ══ */
+  #demo-banner {
+    background: linear-gradient(90deg, #5f8562, #7a9e7e);
+    color: white; text-align: center;
+    padding: 10px 24px;
+    font-size: 0.84rem; font-weight: 600;
+    letter-spacing: 0.01em;
+    display: none;
+    position: sticky; top: 0; z-index: 200;
+    box-shadow: 0 2px 12px rgba(122,158,126,0.35);
+  }
+  #demo-banner.show { display: block; }
+  #demo-banner span { opacity: 0.85; font-weight: 400; }
+
+
+
+  /* ── HEADER ── */
+  header {
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--light-gray);
+    position: sticky; top: 40px; z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+  .header-inner {
+    max-width: 1100px; margin: 0 auto;
+    padding: 0 24px; height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--sage), var(--sage-light));
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+  }
+  .logo-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem; color: var(--charcoal); letter-spacing: -0.02em;
+  }
+  .logo-text span { color: var(--sage); }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .header-badge {
+    background: var(--sage-pale); color: var(--sage);
+    font-size: 0.72rem; font-weight: 600;
+    padding: 4px 12px; border-radius: 20px;
+    letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .btn-logout {
+    background: var(--light-gray); color: var(--mid-gray);
+    border: none; border-radius: 8px; padding: 6px 14px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 600;
+    cursor: pointer; transition: background 0.2s, color 0.2s;
+  }
+  .btn-logout:hover { background: #fecaca; color: #b91c1c; }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(160deg, var(--sage-pale) 0%, var(--cream) 60%);
+    padding: 72px 24px 56px;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -80px; right: -80px;
+    width: 300px; height: 300px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(168,197,172,0.3) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute; bottom: -60px; left: -60px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,133,106,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--warm-white); border: 1px solid var(--light-gray);
+    border-radius: 20px; padding: 6px 16px;
+    font-size: 0.78rem; font-weight: 500; color: var(--sage);
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .hero-eyebrow::before { content: '●'; font-size: 8px; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    line-height: 1.15; color: var(--charcoal);
+    letter-spacing: -0.03em; margin-bottom: 18px;
+    max-width: 720px; margin-left: auto; margin-right: auto;
+  }
+  .hero h1 em { font-style: italic; color: var(--sage); }
+  .hero p {
+    font-size: 1.05rem; color: var(--mid-gray);
+    max-width: 520px; margin: 0 auto 16px; line-height: 1.65;
+  }
+  .hero-stats {
+    display: flex; justify-content: center; gap: 32px;
+    margin-top: 36px; flex-wrap: wrap;
+  }
+  .hero-stat { text-align: center; }
+  .hero-stat strong {
+    display: block; font-family: 'DM Serif Display', serif;
+    font-size: 1.9rem; color: var(--charcoal);
+  }
+  .hero-stat span { font-size: 0.8rem; color: var(--mid-gray); }
+
+  /* ── DEMO NOTICE ── */
+  .demo-notice {
+    max-width: 1100px; margin: 24px auto 0; padding: 0 24px;
+  }
+  .demo-notice-inner {
+    background: #fffbeb; border: 2px dashed #f59e0b;
+    border-radius: var(--radius-sm); padding: 14px 20px;
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .demo-notice-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 1px; }
+  .demo-notice-text { font-size: 0.87rem; color: #78350f; line-height: 1.55; }
+  .demo-notice-text strong { color: #92400e; }
+
+  /* ── MAIN LAYOUT ── */
+  .main-wrap {
+    max-width: 1100px; margin: 0 auto;
+    padding: 32px 24px 80px;
+    display: grid; grid-template-columns: 420px 1fr;
+    gap: 32px; align-items: start;
+  }
+  @media(max-width:860px) { .main-wrap { grid-template-columns: 1fr; } }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--warm-white); border-radius: var(--radius);
+    box-shadow: var(--card-shadow); overflow: hidden;
+    transition: box-shadow 0.3s;
+  }
+  .card:hover { box-shadow: var(--card-shadow-hover); }
+  .card-header {
+    padding: 24px 28px 18px;
+    border-bottom: 1px solid var(--light-gray);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .card-icon {
+    width: 40px; height: 40px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .card-icon.green { background: var(--sage-pale); }
+  .card-icon.clay { background: var(--clay-light); }
+  .card-title { font-size: 1rem; font-weight: 600; }
+  .card-sub { font-size: 0.8rem; color: var(--mid-gray); margin-top: 2px; }
+  .card-body { padding: 24px 28px; }
+
+  /* ── ICC ── */
+  .icc-grid { display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center; }
+  .icc-valor {
+    text-align: center;
+    background: var(--sage-pale); border-radius: var(--radius-sm);
+    padding: 18px 24px; min-width: 110px;
+  }
+  .icc-numero {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.4rem; line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .icc-etiqueta { font-size: 0.72rem; color: var(--mid-gray); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .icc-riesgos { display: flex; flex-direction: column; gap: 8px; }
+  .icc-riesgo-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: var(--cream); border-radius: 8px; padding: 10px 12px;
+    border-left: 3px solid transparent;
+  }
+  .icc-riesgo-item.bajo   { border-left-color: #22c55e; }
+  .icc-riesgo-item.moderado { border-left-color: #f59e0b; }
+  .icc-riesgo-item.alto   { border-left-color: #ef4444; }
+  .icc-riesgo-item.muy-alto { border-left-color: #7c3aed; }
+  .icc-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+  .bajo .icc-dot   { background: #22c55e; }
+  .moderado .icc-dot { background: #f59e0b; }
+  .alto .icc-dot   { background: #ef4444; }
+  .muy-alto .icc-dot { background: #7c3aed; }
+  .icc-riesgo-titulo { font-size: 0.8rem; font-weight: 700; margin-bottom: 2px; }
+  .icc-riesgo-desc { font-size: 0.8rem; color: var(--mid-gray); line-height: 1.45; }
+  .icc-badge {
+    display: inline-block; border-radius: 20px; padding: 3px 12px;
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+    margin-top: 6px;
+  }
+  .badge-bajo     { background: #dcfce7; color: #15803d; }
+  .badge-moderado { background: #fef3c7; color: #b45309; }
+  .badge-alto     { background: #fee2e2; color: #b91c1c; }
+  .badge-muy-alto { background: #ede9fe; color: #6d28d9; }
+  @media(max-width:500px) { .icc-grid { grid-template-columns: 1fr; } .icc-valor { min-width: unset; } }
+
+  /* ── FORM ── */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+  label {
+    font-size: 0.8rem; font-weight: 500; color: var(--mid-gray);
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  input, select, textarea {
+    background: var(--sage-pale); border: 1.5px solid transparent;
+    border-radius: var(--radius-sm); padding: 11px 14px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.92rem; color: var(--charcoal);
+    outline: none; transition: border-color 0.2s, background 0.2s; width: 100%;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--sage); background: var(--warm-white);
+  }
+  select {
+    cursor: pointer; appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a9e7e' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px;
+  }
+  textarea { resize: vertical; min-height: 72px; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 13px 24px; border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.95rem;
+    border: none; cursor: pointer; transition: all 0.22s; width: 100%;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--sage), #5f8562);
+    color: white; box-shadow: 0 4px 16px rgba(122,158,126,0.4);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(122,158,126,0.5); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-ghost {
+    background: var(--light-gray); color: var(--mid-gray);
+    font-size: 0.82rem; padding: 8px 16px; width: auto;
+  }
+  .btn-ghost:hover { background: var(--sage-pale); color: var(--sage); }
+
+  /* ── RESULTS ── */
+  #results { display: none; }
+  #results.visible {
+    display: flex; flex-direction: column; gap: 24px;
+    animation: fadeUp 0.5s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Result demo label */
+  .result-demo-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #fef3c7; border: 1px solid #fcd34d; color: #92400e;
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.07em; padding: 4px 12px; border-radius: 20px;
+    margin-bottom: 4px;
+  }
+
+  .result-section-title {
+    font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--mid-gray);
+    margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+  }
+  .result-section-title::after { content: ''; flex: 1; height: 1px; background: var(--light-gray); }
+
+  /* Meal plan */
+  .meal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media(max-width:600px) { .meal-grid { grid-template-columns: 1fr; } }
+  .meal-card {
+    background: var(--sage-pale); border-radius: var(--radius-sm);
+    padding: 14px 16px; border-left: 3px solid var(--sage);
+  }
+  .meal-card.snack { border-left-color: var(--clay); background: var(--clay-light); }
+  .meal-label {
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--sage); margin-bottom: 4px;
+  }
+  .meal-card.snack .meal-label { color: var(--clay); }
+  .meal-desc { font-size: 0.88rem; line-height: 1.5; color: var(--charcoal); }
+
+  /* Shopping list */
+  .shop-cats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media(max-width:500px) { .shop-cats { grid-template-columns: 1fr; } }
+  .shop-cat {
+    background: var(--warm-white); border: 1px solid var(--light-gray);
+    border-radius: var(--radius-sm); padding: 14px;
+  }
+  .shop-cat-title { font-size: 0.78rem; font-weight: 700; color: var(--sage); margin-bottom: 8px; }
+  .shop-cat ul { list-style: none; }
+  .shop-cat li {
+    font-size: 0.84rem; color: var(--charcoal);
+    padding: 3px 0; display: flex; align-items: center; gap: 6px;
+  }
+  .shop-cat li::before { content: '✓'; color: var(--sage); font-weight: 700; font-size: 10px; }
+
+  /* Tips */
+  .tips-list { display: flex; flex-direction: column; gap: 10px; }
+  .tip-item {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: var(--sage-pale); border-radius: var(--radius-sm); padding: 12px 14px;
+  }
+  .tip-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--sage); color: white;
+    font-size: 0.7rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .tip-text { font-size: 0.86rem; line-height: 1.5; }
+
+  /* WhatsApp message */
+  .wa-box {
+    background: #e7f5e8; border: 1px solid #c5e1c6;
+    border-radius: var(--radius-sm); padding: 16px;
+    font-size: 0.88rem; line-height: 1.65; color: #1a3a1b;
+    white-space: pre-wrap; position: relative;
+  }
+  .wa-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px;
+  }
+  .wa-label {
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.07em; color: #2a7d2e;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  /* Macros */
+  .macros {
+    background: var(--warm-white); border: 1px solid var(--light-gray);
+    border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 16px;
+  }
+  .macros-title {
+    font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.07em; color: var(--mid-gray); margin-bottom: 12px;
+  }
+  .macro-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .macro-pill {
+    background: var(--sage-pale); border-radius: 8px; padding: 6px 12px;
+    font-size: 0.8rem; font-weight: 500; display: flex; gap: 6px; align-items: center;
+  }
+  .macro-pill span { font-weight: 700; color: var(--sage); }
+  .macro-pill.clay-pill { background: var(--clay-light); }
+  .macro-pill.clay-pill span { color: var(--clay); }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(60px);
+    background: var(--charcoal); color: white; padding: 12px 20px; border-radius: 30px;
+    font-size: 0.85rem; font-weight: 500; transition: transform 0.3s; z-index: 9999;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  .divider { height: 1px; background: var(--light-gray); margin: 4px 0; }
+  .mt-12 { margin-top: 12px; }
+  .empty-state { text-align: center; padding: 48px 24px; color: var(--mid-gray); }
+  .empty-state .big-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.4; }
+  .empty-state p { font-size: 0.9rem; line-height: 1.6; }
+
+  /* Loading */
+  .loading { display: none; }
+  .loading.active { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px; }
+  .spinner {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 2px solid var(--sage-pale); border-top-color: var(--sage);
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--light-gray); border-radius: 3px; }
+
+  /* ── LANDING SECTION ── */
+  .landing {
+    background: linear-gradient(170deg, #1e2a1f 0%, #2b3d2d 50%, #1e2a1f 100%);
+    padding: 100px 24px 80px; text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .landing::before {
+    content: '';
+    position: absolute; top: -120px; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(122,158,126,0.18) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .landing::after {
+    content: '';
+    position: absolute; bottom: -80px; right: -60px;
+    width: 280px; height: 280px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,133,106,0.12) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .landing-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(122,158,126,0.15); border: 1px solid rgba(122,158,126,0.35);
+    border-radius: 20px; padding: 6px 18px;
+    font-size: 0.78rem; font-weight: 600; color: var(--sage-light);
+    margin-bottom: 28px; letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .landing-eyebrow::before { content: '●'; font-size: 7px; animation: pulse 2s infinite; }
+  .landing h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.1rem, 5.5vw, 3.6rem);
+    line-height: 1.12; color: #ffffff;
+    letter-spacing: -0.03em; margin-bottom: 22px;
+    max-width: 760px; margin-left: auto; margin-right: auto;
+  }
+  .landing h2 em { font-style: italic; color: var(--sage-light); }
+  .landing-sub {
+    font-size: 1.05rem; color: rgba(255,255,255,0.62);
+    max-width: 560px; margin: 0 auto 48px; line-height: 1.7;
+  }
+  .landing-sub strong { color: rgba(255,255,255,0.85); font-weight: 500; }
+  .landing-benefits {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 16px; max-width: 960px; margin: 0 auto 52px;
+  }
+  @media(max-width:860px) { .landing-benefits { grid-template-columns: 1fr 1fr; } }
+  @media(max-width:500px) { .landing-benefits { grid-template-columns: 1fr; } }
+  .benefit-card {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius); padding: 28px 20px 24px; text-align: center;
+    transition: background 0.25s, border-color 0.25s, transform 0.25s;
+  }
+  .benefit-card:hover {
+    background: rgba(122,158,126,0.12); border-color: rgba(122,158,126,0.4);
+    transform: translateY(-3px);
+  }
+  .benefit-icon { font-size: 2rem; margin-bottom: 14px; display: block; }
+  .benefit-title { font-family: 'DM Serif Display', serif; font-size: 1.05rem; color: #fff; margin-bottom: 8px; }
+  .benefit-desc { font-size: 0.82rem; color: rgba(255,255,255,0.5); line-height: 1.55; }
+  .btn-landing {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 16px 40px;
+    background: linear-gradient(135deg, var(--sage), #5f8562);
+    color: white; font-family: 'DM Sans', sans-serif;
+    font-weight: 700; font-size: 1.05rem;
+    border: none; border-radius: var(--radius-sm);
+    cursor: pointer; text-decoration: none;
+    box-shadow: 0 6px 28px rgba(122,158,126,0.45);
+    transition: transform 0.22s, box-shadow 0.22s;
+    letter-spacing: 0.01em;
+  }
+  .btn-landing:hover { transform: translateY(-3px); box-shadow: 0 10px 36px rgba(122,158,126,0.55); }
+  .btn-landing-note { display: block; margin-top: 14px; font-size: 0.78rem; color: rgba(255,255,255,0.38); letter-spacing: 0.03em; }
+
+  /* ── PRICING SECTION ── */
+  .pricing {
+    background: var(--cream); padding: 80px 24px;
+    text-align: center; border-top: 1px solid var(--light-gray);
+  }
+  .pricing-eyebrow {
+    display: inline-block;
+    background: var(--sage-pale); color: var(--sage);
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; padding: 5px 14px; border-radius: 20px; margin-bottom: 20px;
+  }
+  .pricing h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    color: var(--charcoal); letter-spacing: -0.03em; margin-bottom: 10px;
+  }
+  .pricing-sub { font-size: 0.95rem; color: var(--mid-gray); margin-bottom: 40px; }
+  .pricing-card {
+    background: var(--warm-white); border-radius: var(--radius);
+    box-shadow: var(--card-shadow-hover); border: 2px solid var(--sage-pale);
+    max-width: 440px; margin: 0 auto 32px; padding: 40px 36px 36px;
+    position: relative; overflow: hidden;
+  }
+  .pricing-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--sage), var(--sage-light));
+  }
+  .pricing-badge {
+    display: inline-block; background: var(--clay-light); color: var(--clay);
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; padding: 4px 12px; border-radius: 20px; margin-bottom: 20px;
+  }
+  .pricing-price {
+    font-family: 'DM Serif Display', serif;
+    font-size: 3.2rem; color: var(--charcoal);
+    letter-spacing: -0.04em; line-height: 1; margin-bottom: 4px;
+  }
+  .pricing-price sup { font-size: 1.4rem; vertical-align: super; letter-spacing: 0; }
+  .pricing-price-after { font-size: 0.85rem; color: var(--mid-gray); margin-bottom: 28px; }
+  .pricing-price-after strong { color: var(--charcoal); }
+  .pricing-perks { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; text-align: left; }
+  .pricing-perk { display: flex; align-items: center; gap: 12px; font-size: 0.9rem; color: var(--charcoal); }
+  .perk-check {
+    width: 22px; height: 22px; border-radius: 50%; background: var(--sage-pale);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 11px; font-weight: 700; color: var(--sage);
+  }
+  .btn-pricing {
+    display: block; width: 100%; padding: 15px 24px;
+    background: linear-gradient(135deg, var(--sage), #5f8562);
+    color: white; font-family: 'DM Sans', sans-serif;
+    font-weight: 700; font-size: 1rem; border: none; border-radius: var(--radius-sm);
+    cursor: pointer; box-shadow: 0 4px 20px rgba(122,158,126,0.4);
+    transition: transform 0.22s, box-shadow 0.22s; letter-spacing: 0.01em;
+  }
+  .btn-pricing:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(122,158,126,0.5); }
+  .pricing-footer {
+    font-size: 0.78rem; color: var(--mid-gray);
+    display: flex; justify-content: center; gap: 24px; flex-wrap: wrap;
+  }
+  .pricing-footer span { display: flex; align-items: center; gap: 5px; }
+</style>
+</head>
+<body>
+
+<!-- ══ DEMO BANNER ══ -->
+<div id="demo-banner">
+  💰 Más pacientes, menos tiempo &nbsp;·&nbsp; <span>Activa tu acceso hoy</span>
+</div>
+
+<div id="app-wrapper">
+
+<!-- ══ LANDING ══ -->
+<section class="landing">
+  <div class="landing-eyebrow">Herramienta para nutriólogas</div>
+  <h2>Haz planes nutricionales<br>en <em>60 segundos</em>…<br>y llena tu consulta</h2>
+  <p class="landing-sub">
+    Deja de perder pacientes por falta de seguimiento.
+    NutriCopilot automatiza tus planes, mensajes y acompañamiento para que tus pacientes
+    <strong>regresen… y te recomienden.</strong>
+  </p>
+
+  <div class="landing-benefits">
+    <div class="benefit-card">
+      <span class="benefit-icon">⚡</span>
+      <div class="benefit-title">Plan en 60 segundos</div>
+      <div class="benefit-desc">Calorías, macros y menú semanal calculados al instante con los datos del paciente.</div>
+    </div>
+    <div class="benefit-card">
+      <span class="benefit-icon">🛒</span>
+      <div class="benefit-title">Lista del súper</div>
+      <div class="benefit-desc">Lista organizada por categorías, lista para compartir o imprimir sin esfuerzo extra.</div>
+    </div>
+    <div class="benefit-card">
+      <span class="benefit-icon">💬</span>
+      <div class="benefit-title">1 clic para WhatsApp</div>
+      <div class="benefit-desc">Texto personalizado y cálido listo para copiar y enviar a tu paciente al momento.</div>
+    </div>
+    <div class="benefit-card">
+      <span class="benefit-icon">📋</span>
+      <div class="benefit-title">100% personalizado</div>
+      <div class="benefit-desc">Plan único por paciente según su objetivo, actividad, presupuesto y restricciones.</div>
+    </div>
+  </div>
+
+  <a href="#app-herramienta" class="btn-landing" onclick="document.getElementById('app-herramienta').scrollIntoView({behavior:'smooth'}); return false;">
+    🌿 Ir al generador
+  </a>
+  <span class="btn-landing-note">Acceso activo · Sesión iniciada</span>
+</section>
+
+<!-- ══ PRICING ══ -->
+<section class="pricing">
+  <div class="pricing-eyebrow">Precio de lanzamiento</div>
+  <h2>Simple, sin sorpresas</h2>
+  <p class="pricing-sub">Un precio claro para que te enfoques en tus pacientes, no en tu factura.</p>
+  <div class="pricing-card">
+    <div class="pricing-badge">🎉 Oferta de lanzamiento</div>
+    <div class="pricing-price"><sup>$</sup>99</div>
+    <div class="pricing-price-after">MXN el primer mes · después <strong>$149 MXN/mes</strong></div>
+    <div class="pricing-perks">
+      <div class="pricing-perk"><div class="perk-check">✓</div><span>Acceso completo a todas las funciones</span></div>
+      <div class="pricing-perk"><div class="perk-check">✓</div><span>Planes ilimitados para tus pacientes</span></div>
+      <div class="pricing-perk"><div class="perk-check">✓</div><span>Lista del súper y mensajes de WhatsApp incluidos</span></div>
+      <div class="pricing-perk"><div class="perk-check">✓</div><span>Cancela cuando quieras, sin cargos ocultos</span></div>
+      <div class="pricing-perk"><div class="perk-check">✓</div><span>Actualizaciones y nuevas funciones sin costo extra</span></div>
+    </div>
+    <button class="btn-pricing" onclick="document.getElementById('app-herramienta').scrollIntoView({behavior:'smooth'})">🚀 Empezar ahora</button>
+  </div>
+  <div class="pricing-footer">
+    <span>🔒 Pago seguro</span>
+    <span>🔄 Cancela cuando quieras</span>
+    <span>✨ Sin cargos ocultos</span>
+  </div>
+</section>
+
+<!-- HEADER -->
+<header id="app-herramienta">
+  <div class="header-inner">
+    <a class="logo" href="#">
+      <div class="logo-icon">🥗</div>
+      <span class="logo-text">Nutri<span>Copilot</span></span>
+    </a>
+    <div class="header-right">
+      <div class="header-badge">✦ Para nutriólogas</div>
+      <button class="btn-logout" onclick="cerrarSesion()">Cerrar sesión</button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Generador de planes nutricionales</div>
+  <h1>Tu consulta más productiva,<br><em>sin trabajar más horas</em></h1>
+  <p>Genera planes personalizados, listas del súper y mensajes de WhatsApp para tus pacientes — todo en menos de 1 minuto.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>5×</strong><span>más rápido que manual</span></div>
+    <div class="hero-stat"><strong>100%</strong><span>personalizado por paciente</span></div>
+    <div class="hero-stat"><strong>1 clic</strong><span>listo para WhatsApp</span></div>
+  </div>
+</div>
+
+<!-- DEMO NOTICE (oculto) -->
+<div class="demo-notice" id="demo-notice" style="display:none;"></div>
+
+<!-- MAIN -->
+<div class="main-wrap">
+
+  <!-- FORM COLUMN -->
+  <div>
+    <div class="card">
+
+      <!-- LOGIN PANEL -->
+      <div id="login-panel">
+        <div class="card-header">
+          <div class="card-icon green">🔒</div>
+          <div>
+            <div class="card-title">Acceso a NutriCopilot</div>
+            <div class="card-sub">Ingresa tus credenciales para continuar</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="login-error" id="login-error">Usuario o contraseña incorrectos. Intenta de nuevo.</div>
+          <div class="login-field">
+            <label>Usuario</label>
+            <input type="text" id="login-user" placeholder="nutriologa@correo.com" autocomplete="username" />
+          </div>
+          <div class="login-field">
+            <label>Contraseña</label>
+            <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" />
+          </div>
+          <button class="btn-login" onclick="intentarLogin()">🌿 Entrar a NutriCopilot</button>
+          <div class="login-hint">Demo: usuario <strong>nutriologa</strong> · contraseña <strong>nutricopilot2024</strong></div>
+        </div>
+      </div>
+
+      <!-- FORM PANEL (oculto hasta login) -->
+      <div id="form-panel">
+      <div class="card-header">
+        <div class="card-icon green">👤</div>
+        <div>
+          <div class="card-title">Datos del paciente</div>
+          <div class="card-sub">Completa el perfil para generar el plan</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label>Nombre completo</label>
+            <input type="text" id="nombre" placeholder="Ej. María González" />
+          </div>
+          <div class="form-group">
+            <label>Edad</label>
+            <input type="number" id="edad" placeholder="28" min="10" max="99" />
+          </div>
+          <div class="form-group">
+            <label>Peso (kg)</label>
+            <input type="number" id="peso" placeholder="65" min="30" max="200" />
+          </div>
+          <div class="form-group">
+            <label>Estatura (cm)</label>
+            <input type="number" id="estatura" placeholder="165" min="100" max="220" />
+          </div>
+          <div class="form-group">
+            <label>Sexo</label>
+            <select id="sexo">
+              <option value="mujer">Mujer</option>
+              <option value="hombre">Hombre</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label>Objetivo</label>
+            <select id="objetivo">
+              <option value="bajar">🔥 Bajar grasa</option>
+              <option value="muscular">💪 Subir masa muscular</option>
+              <option value="mantener">⚖️ Mantener peso</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label>Nivel de actividad</label>
+            <select id="actividad">
+              <option value="bajo">🛋 Bajo (sedentario)</option>
+              <option value="medio">🚶 Medio (1-3 días/semana)</option>
+              <option value="alto">🏋️ Alto (4-6 días/semana)</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label>Presupuesto semanal</label>
+            <select id="presupuesto">
+              <option value="bajo">💰 Bajo (económico)</option>
+              <option value="medio">💰💰 Medio</option>
+              <option value="alto">💰💰💰 Alto (premium)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Cintura (cm)</label>
+            <input type="number" id="cintura" placeholder="80" min="40" max="200" />
+          </div>
+          <div class="form-group">
+            <label>Cadera (cm)</label>
+            <input type="number" id="cadera" placeholder="100" min="40" max="200" />
+          </div>
+          <div class="form-group full">
+            <label>Restricciones / intolerancias</label>
+            <textarea id="restricciones" placeholder="Ej. Intolerancia al gluten, alergia a mariscos, vegetariana..."></textarea>
+          </div>
+          <div class="form-group full" id="campo-whatsapp" style="display:none;">
+            <label>📱 WhatsApp del paciente</label>
+            <input type="tel" id="whatsapp-paciente" placeholder="Ej. 3312345678" />
+            <span style="font-size:0.75rem;color:var(--mid-gray);margin-top:2px;">Con código de país si es necesario. Ej. 521 para México.</span>
+          </div>
+        </div>
+        <div class="mt-12">
+          <button class="btn btn-primary" onclick="generarPlan()">
+            ⚡ Generar Plan Nutricional
+          </button>
+        </div>
+        <div class="loading" id="loading">
+          <div class="spinner"></div>
+          <span style="font-size:0.88rem;color:var(--mid-gray)">Generando plan personalizado con IA...</span>
+        </div>
+
+        <!-- Acciones post-generación (solo admin) -->
+        <div id="acciones-admin" style="display:none; margin-top:16px; flex-direction:column; gap:10px;">
+          <button class="btn" style="background:linear-gradient(135deg,#e74c3c,#c0392b);color:white;" onclick="generarPDF()">
+            📄 Descargar Plan en PDF
+          </button>
+          <button class="btn" style="background:linear-gradient(135deg,#25d366,#128c7e);color:white;" onclick="enviarWhatsApp()">
+            💬 Enviar Plan por WhatsApp
+          </button>
+        </div>
+      </div>
+      </div><!-- /form-panel -->
+    </div>
+  </div>
+
+  <!-- RESULTS COLUMN -->
+  <div id="results-col" style="display:none;">
+    <!-- Empty state -->
+    <div id="empty-state" class="card">
+      <div class="empty-state">
+        <div class="big-icon">🥦</div>
+        <p><strong>Aquí aparecerá el plan completo</strong><br>
+        Llena el formulario y haz clic en<br>"Generar Plan Nutricional"</p>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div id="results">
+
+
+
+      <!-- ICC -->
+      <div class="card" id="card-icc" style="display:none;">
+        <div class="card-header">
+          <div class="card-icon green">📐</div>
+          <div>
+            <div class="card-title">Índice Cintura-Cadera (ICC)</div>
+            <div class="card-sub" id="icc-label">—</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="icc-resultado"></div>
+        </div>
+      </div>
+
+      <!-- Macros -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon green">📊</div>
+          <div>
+            <div class="card-title">Estimación calórica</div>
+            <div class="card-sub" id="paciente-label">—</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="macros">
+            <div class="macros-title">Distribución de macros diaria sugerida</div>
+            <div class="macro-row" id="macro-row"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plan semanal -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon green">🥗</div>
+          <div>
+            <div class="card-title">Plan alimenticio semanal</div>
+            <div class="card-sub">5 comidas al día · Lunes a Viernes</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="plan-comidas"></div>
+        </div>
+      </div>
+
+      <!-- Shopping -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon clay">🛒</div>
+          <div>
+            <div class="card-title">Lista del súper</div>
+            <div class="card-sub">Agrupada por categorías</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="lista-super"></div>
+        </div>
+      </div>
+
+      <!-- Tips -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon green">🧠</div>
+          <div>
+            <div class="card-title">Recomendaciones personalizadas</div>
+            <div class="card-sub">Tips basados en el objetivo del paciente</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="tips-list" class="tips-list"></div>
+        </div>
+      </div>
+
+      <!-- WhatsApp -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon green">💬</div>
+          <div>
+            <div class="card-title">Mensaje listo para WhatsApp</div>
+            <div class="card-sub">Cópialo o envíalo directo al paciente</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="wa-header">
+            <div class="wa-label">📱 WhatsApp</div>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-ghost" onclick="copiarMensaje()">📋 Copiar</button>
+              <button class="btn btn-ghost" id="btn-wa-directo" style="background:#dcfce7;color:#16a34a;display:none;" onclick="enviarWhatsApp()">💬 Enviar</button>
+            </div>
+          </div>
+          <div class="wa-box" id="wa-msg"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</div><!-- /app-wrapper -->
+
+<div class="toast" id="toast"></div>
+
+<script>
 // ══ AUTH ══
 const USUARIOS = {
   "nutriologa": "nutricopilot2024",   // demo
   "admin": "Admin2024!"               // acceso real — cambia esta clave antes de publicar
 };
-
-// modo: 'demo' (sin IA) o 'admin' (con IA)
-window.__modo = 'demo';
 
 function intentarLogin() {
   const user = document.getElementById('login-user').value.trim().toLowerCase();
@@ -13,35 +947,38 @@ function intentarLogin() {
   const err = document.getElementById('login-error');
   const userKey = user.includes('@') ? user.split('@')[0] : user;
 
+  const USUARIOS_DEMO = ['nutriologa'];
+
   if (USUARIOS[userKey] && USUARIOS[userKey] === pass) {
     err.classList.remove('show');
-
-    const isAdmin = userKey === 'admin';
-    window.__modo = isAdmin ? 'admin' : 'demo';
-
+    window._esAdmin = !USUARIOS_DEMO.includes(userKey);
     document.getElementById('login-panel').style.display = 'none';
     document.getElementById('form-panel').style.display = 'block';
     document.getElementById('demo-banner').classList.add('show');
     document.getElementById('results-col').style.display = 'block';
-    return;
+    // Mostrar campo WhatsApp y acciones solo para admin
+    if (window._esAdmin) {
+      document.getElementById('campo-whatsapp').style.display = 'flex';
+    }
+    // Solo mostrar aviso demo si es usuario de prueba
+    if (USUARIOS_DEMO.includes(userKey)) {
+      document.getElementById('demo-notice').style.display = 'block';
+    }
+  } else {
+    err.classList.add('show');
+    document.getElementById('login-pass').value = '';
+    document.getElementById('login-pass').focus();
   }
-
-  err.classList.add('show');
-  document.getElementById('login-pass').value = '';
-  document.getElementById('login-pass').focus();
 }
 
 function cerrarSesion() {
-  window.__modo = 'demo';
-
   document.getElementById('login-panel').style.display = 'block';
   document.getElementById('form-panel').style.display = 'none';
   document.getElementById('demo-banner').classList.remove('show');
   document.getElementById('results-col').style.display = 'none';
-
+  document.getElementById('demo-notice').style.display = 'none';
   document.getElementById('results').classList.remove('visible');
   document.getElementById('empty-state').style.display = 'block';
-
   document.getElementById('login-user').value = '';
   document.getElementById('login-pass').value = '';
   document.getElementById('login-error').classList.remove('show');
@@ -52,19 +989,288 @@ document.addEventListener('keydown', function(e) {
     intentarLogin();
   }
 });
+
+// ── DATA (legacy demo - no se usa con IA) ──
+const PLANES = {
+  bajar: {
+    bajo: {
+      desayuno: ["Avena con agua, plátano y canela", "Huevo revuelto con frijoles y tortilla de maíz", "Yogur natural con granola casera y manzana", "Pan integral tostado con huevo estrellado y naranja", "Atole de avena con fruta de temporada"],
+      comida: ["Arroz integral con pollo al limón y verduras al vapor", "Sopa de lentejas con epazote y tortilla", "Filete de pescado al horno con calabacitas y frijoles", "Pechuga a la plancha con arroz y ensalada", "Caldo de pollo con verduras y tortilla integral"],
+      cena: ["Ensalada de atún con lechuga, jitomate y pepino", "Sopa de verduras ligera y 2 tostadas", "Huevo cocido con brócoli al vapor", "Crema de zanahoria y pan integral", "Tacos de nopales con frijoles negros"],
+      colacion1: ["1 manzana + 10 almendras", "Pepino con limón y chile", "Jícama con jugo de naranja", "Palomitas naturales sin mantequilla", "1 pera + té verde"],
+      colacion2: ["Yogur natural sin azúcar", "Zanahoria con hummus de frijol", "1 plátano pequeño", "Tostadas horneadas con aguacate", "Kéfir natural con canela"]
+    },
+    medio: {
+      desayuno: ["Smoothie de espinaca, plátano, leche y avena", "Omelette de claras con queso fresco y jitomate", "Yogur griego con fresas, semillas de chía y granola", "Pan integral con aguacate y huevo poché", "Hotcakes de avena y plátano con miel de abeja"],
+      comida: ["Pechuga de pollo al horno con camote asado y ensalada mixta", "Salmón al limón con quinoa y espárragos", "Bistec de res magro con verduras a la plancha y tortilla", "Atún fresco al vapor con arroz integral y brócoli", "Pollo al chipotle con frijoles negros y nopales"],
+      cena: ["Bowl de verduras asadas con pollo deshebrado y vinagreta", "Crema de brócoli con queso panela y pan integral", "Ensalada de garbanzo con pepino, jitomate y limón", "Wrap integral de pavo y queso cottage", "Sopa miso con tofu y algas"],
+      colacion1: ["Manzana con mantequilla de cacahuate natural", "Mix de nueces y arándanos", "Cottage con jitomate cherry", "Edamames con sal de mar", "Plátano con cacao en polvo"],
+      colacion2: ["Batido de proteína vegetal", "Palitos de apio con mantequilla de almendra", "Gelatina de agua con frutas", "1 naranja + pistaches", "Pepino con limón y tajín"]
+    },
+    alto: {
+      desayuno: ["Bowl de açaí con granola premium, frutos del bosque y miel de maple", "Omelette de 4 claras con salmón ahumado, aguacate y queso manchego", "Tostadas de pan artesanal con ricotta y fresas maceradas", "Pancakes proteicos con arándanos y crema de almendras", "Parfait de yogur griego, semillas de hemp y frutas exóticas"],
+      comida: ["Salmón al miso con quinoa negra y edamames", "Pechuga de pavo orgánico con batata al romero y ensalada verde", "Bowl de atún tataki con aguacate, pepino y arroz de coliflor", "Filete de res magro al grill con espárragos y puré de coliflor", "Pollo orgánico en salsa de hierbas frescas con lenteja negra"],
+      cena: ["Sopa de miso con tofu firme, wakame y semillas de sésamo", "Ensalada de kale, granada, nuez y vinagreta de naranja", "Wrap de lechuga con camarones al ajillo y guacamole", "Crema de lentejas rojas con cúrcuma y pan de semillas", "Bowl de coliflor asada con garbanzos crujientes y tahini"],
+      colacion1: ["Mix de frutos secos premium con chocolate 85%", "Smoothie verde con spirulina y jengibre", "Dátiles con mantequilla de almendra raw", "Proteína vegana con leche de macadamia", "Palitos de jícama con guacamole artesanal"],
+      colacion2: ["Kéfir con semillas de chía y mango", "Manzana orgánica con tahini", "Bowl de frutas exóticas con coco rallado", "Batido de colágeno con frambuesas", "Queso brie con manzana y nuez"]
+    }
+  },
+  muscular: {
+    bajo: {
+      desayuno: ["4 huevos revueltos con frijoles y 2 tortillas", "Avena cocida con leche, plátano y 2 huevos", "Licuado de leche, plátano, avena y cacahuate", "Pan tostado con huevo y frijoles negros", "Cereal integral con leche y fruta"],
+      comida: ["Pierna de pollo guisada con arroz y ensalada", "Bistec encebollado con frijoles y tortillas", "Milanesa de pollo al horno con arroz y verduras", "Atún con pasta y verduras al vapor", "Carne molida con papas y ensalada"],
+      cena: ["Licuado de leche con plátano y 2 cucharadas de cacahuate", "Sopa de pasta con pollo deshebrado", "Tortilla con frijoles y queso fresco", "Tamal de rajas con leche", "2 huevos cocidos con pan integral"],
+      colacion1: ["Licuado de leche con plátano", "Pan integral con mantequilla de cacahuate", "1 plátano + leche", "Tortilla con frijoles", "Cacahuates + 1 manzana"],
+      colacion2: ["Vaso de leche con avena", "Jocoque con fruta", "Pan con queso panela", "Leche con cacao", "Requesón con miel"]
+    },
+    medio: {
+      desayuno: ["Omelette de 4 huevos con avena y fruta", "Smoothie de proteína, plátano, leche y avena", "Hotcakes de avena con huevo y fruta", "Yogur griego con granola y proteína en polvo", "Tazón de quinoa con huevo estrellado y aguacate"],
+      comida: ["Pechuga doble al grill con arroz integral y verduras", "Pasta con atún, aceite de oliva y brócoli", "Filete de tilapia con quinoa y camote", "Salmón al horno con papas y ensalada verde", "Carne de res magra al grill con legumbres y arroz"],
+      cena: ["Batido de proteína con leche, plátano y mantequilla de maní", "Pollo deshebrado con tortilla integral y aguacate", "Requesón con pan integral y jitomate", "Huevo revuelto con espinacas y queso", "Cottage con fruta y nuez"],
+      colacion1: ["Batido de whey con leche entera", "Pan con mantequilla de maní y plátano", "Almendras + queso gouda", "Mezcla de nueces y pasas", "Barra de proteína casera de avena"],
+      colacion2: ["Yogur griego con miel", "Leche con cacao y avena", "Cottage con fruta tropical", "Atún en tostadas", "Queso cottage con nuez"]
+    },
+    alto: {
+      desayuno: ["Bowl proteico: huevos revueltos, salmón, aguacate y pan artesanal", "Pancakes proteicos con whey, blueberries y mantequilla de almendra", "Granola premium con yogur griego, miel de manuka y nueces", "Omelette de claras con queso manchego, espinaca y trufa", "Batido gourmet: proteína vegana, leche de avena, mango y spirulina"],
+      comida: ["Filete de salmón premium con quinoa tricolor y espárragos al grill", "Pechuga de pollo orgánico rellena de espinaca y ricotta con pasta integral", "Atún aleta amarilla al grill con batata morada y ensalada de kale", "Carne de res de primera con puré de coliflor y verduras asadas", "Corvina al limón con arroz de coliflor y pisto de verduras"],
+      cena: ["Batido premium: whey aislado, leche de almendra, plátano y cacao nibs", "Bowl de pollo deshebrado con frijoles negros, aguacate y tortilla de maíz azul", "Salmón ahumado con queso crema, pepino y pan de centeno", "Cottage premium con kiwi, semillas de hemp y miel cruda", "Huevos benedictinos ligeros con espinaca y queso manchego"],
+      colacion1: ["Batido de proteína con leche de macadamia y frutos del bosque", "Mix premium de nueces, almendras y chocolate 85%", "Plátano con mantequilla de cashew raw", "Dátiles medjool rellenos de almendra y coco", "Barra proteica artesanal de avena y cacao"],
+      colacion2: ["Kéfir con granola de quinoa y miel de agave", "Yogur griego islandés (skyr) con fresas y nuez de brasil", "Batido nocturno de caseína con leche de avena", "Requesón artesanal con frambuesas y pistaches", "Pudín de chía con leche de coco y mango"]
+    }
+  },
+  mantener: {
+    bajo: {
+      desayuno: ["Avena con leche, plátano y canela", "2 huevos revueltos con frijoles y tortilla", "Yogur natural con granola y manzana", "Pan integral con huevo y queso fresco", "Cereal de maíz con leche y fruta"],
+      comida: ["Pollo guisado con arroz y ensalada", "Sopa de fideo con pollo y verduras", "Milanesa de pollo con frijoles y tortilla", "Pescado al vapor con arroz y chayote", "Albóndigas en caldillo con verduras"],
+      cena: ["Quesadillas de huitlacoche con ensalada", "Sopa de verduras con 2 tostadas", "Huevo a la mexicana con frijoles", "Tacos de nopales y requesón", "Caldo tlalpeño con tortilla"],
+      colacion1: ["Fruta de temporada", "Pepino con limón", "1 plátano", "Jícama con chile", "Palomitas de maíz naturales"],
+      colacion2: ["Yogur natural", "1 naranja", "Pan integral con frijoles", "Leche con cacao", "Guayabas con chile"]
+    },
+    medio: {
+      desayuno: ["Smoothie verde con espinaca, manzana, chía y leche", "Omelette de 3 huevos con verduras y queso", "Yogur griego con berries y granola artesanal", "Pan integral con aguacate, jitomate y huevo", "Hotcakes de avena integral con miel y fruta"],
+      comida: ["Pechuga al grill con arroz integral y ensalada mediterránea", "Bowl de quinoa con pollo, garbanzos y verduras asadas", "Filete de pescado blanco al vapor con camote y brócoli", "Pasta integral con pesto, pollo y tomate cherry", "Fajitas de res magra con pimientos y guacamole"],
+      cena: ["Sopa de lentejas con verduras y pan integral", "Ensalada de garbanzo con atún, pepino y vinagreta", "Wrap de pavo con lechuga, tomate y hummus", "Crema de jitomate con crutones y queso panela", "Bowl de verduras asadas con huevo y queso feta"],
+      colacion1: ["Manzana con almendras", "Palitos de zanahoria con hummus", "Fruta con yogur", "Mix de nueces", "Jícama con guacamole"],
+      colacion2: ["Yogur griego natural", "Cottage con mango", "Leche con cacao sin azúcar", "Pepino con limón", "1 naranja + nuez"]
+    },
+    alto: {
+      desayuno: ["Bowl de açaí con superfoods, granola premium y frutas tropicales", "Omelette gourmet de claras con salmón, aguacate y brioche", "Granola artesanal con leche de almendra, kiwi y frambuesas", "French toast de pan brioche con frutos del bosque y maple orgánico", "Tostadas de aguacate en pan de masa madre con huevo poché"],
+      comida: ["Ensalada niçoise con atún fresco, huevo y papas baby", "Risotto de hongos silvestres con parmesano y aceite de trufa", "Salmón al horno con costra de hierbas y puré de betabel", "Pollo orgánico al limón con quinoa y ratatouille", "Bowl de tempeh orgánico con vegetales fermentados y arroz negro"],
+      cena: ["Sopa de miso premium con tofu sedoso y hongos shiitake", "Ensalada de kale masajeado con granada, queso de cabra y nuez", "Ceviche de camarón con aguacate y tostadas artesanales", "Bowl de lenteja beluga con verduras asadas y vinagreta de mostaza", "Rollitos de papel de arroz con aguacate, mango y camarón"],
+      colacion1: ["Dátiles con mantequilla de almendra y sal de flor", "Smoothie de frutas exóticas con colágeno", "Mix premium de nueces con chocolate 85% y arándanos", "Kéfir artesanal con semillas y miel cruda", "Chips de kale horneados con sal de mar y levadura nutricional"],
+      colacion2: ["Skyr con frutas del bosque y granola de quinoa", "Bombones de cacao 85% con nuez de brasil", "Batido de té matcha con leche de avena y miel", "Queso brie con pera y nuez pecana", "Pudín de chía con leche de coco y maracuyá"]
+    }
+  }
+};
+
+const SHOPPING = {
+  bajar: {
+    bajo: {
+      proteínas: ["Huevos (cartón)", "Pechuga de pollo", "Atún en lata", "Frijoles negros", "Lentejas"],
+      carbohidratos: ["Avena", "Arroz integral", "Tortillas de maíz", "Pan integral", "Camote"],
+      frutas_verduras: ["Manzanas", "Plátanos", "Pepino", "Jitomate", "Brócoli", "Espinaca", "Nopales"],
+      lácteos: ["Yogur natural", "Leche descremada", "Queso fresco"],
+      extras: ["Limones", "Chile en polvo", "Canela"]
+    },
+    medio: {
+      proteínas: ["Pechuga de pollo", "Salmón fresco", "Atún en agua", "Huevos", "Queso cottage"],
+      carbohidratos: ["Quinoa", "Arroz integral", "Pan integral", "Camote", "Pasta integral"],
+      frutas_verduras: ["Espinaca baby", "Aguacate", "Fresas", "Brócoli", "Pepino", "Jitomate cherry", "Mango"],
+      lácteos: ["Yogur griego", "Queso panela", "Leche light"],
+      extras: ["Aceite de oliva", "Semillas de chía", "Nueces", "Hummus"]
+    },
+    alto: {
+      proteínas: ["Salmón premium", "Pechuga orgánica", "Camarones", "Tofu firme", "Claras de huevo"],
+      carbohidratos: ["Quinoa negra", "Pan artesanal", "Arroz de coliflor", "Batata morada", "Pan de semillas"],
+      frutas_verduras: ["Kale", "Espárragos", "Aguacate orgánico", "Arándanos", "Granada", "Edamames", "Wakame"],
+      lácteos: ["Yogur griego premium", "Ricotta", "Queso manchego light"],
+      extras: ["Aceite de oliva extra virgen", "Miso", "Semillas de hemp", "Spirulina", "Tahini"]
+    }
+  },
+  muscular: {
+    bajo: {
+      proteínas: ["Huevos (docena y media)", "Pollo entero", "Carne molida de res", "Frijoles", "Leche entera"],
+      carbohidratos: ["Arroz blanco", "Pan de caja", "Tortillas", "Avena", "Papa"],
+      frutas_verduras: ["Plátanos", "Manzanas", "Zanahoria", "Brócoli", "Ejotes"],
+      lácteos: ["Leche entera", "Queso fresco", "Jocoque"],
+      extras: ["Cacahuates", "Mantequilla de cacahuate", "Aceite vegetal"]
+    },
+    medio: {
+      proteínas: ["Pechuga de pollo (kg)", "Carne de res magra", "Salmón", "Atún", "Huevos", "Proteína en polvo"],
+      carbohidratos: ["Arroz integral", "Pasta integral", "Avena", "Camote", "Pan integral", "Quinoa"],
+      frutas_verduras: ["Plátanos", "Aguacate", "Espinaca", "Brócoli", "Jitomate", "Verduras mixtas"],
+      lácteos: ["Yogur griego", "Leche entera", "Queso gouda", "Requesón"],
+      extras: ["Mantequilla de maní", "Nueces", "Almendras", "Aceite de oliva"]
+    },
+    alto: {
+      proteínas: ["Salmón premium", "Pechuga orgánica", "Carne de primera", "Atún aleta amarilla", "Whey protein", "Huevos orgánicos"],
+      carbohidratos: ["Quinoa tricolor", "Pasta integral artesanal", "Pan de centeno", "Camote morado", "Arroz integral orgánico"],
+      frutas_verduras: ["Aguacate orgánico", "Kale", "Espárragos", "Frutos del bosque", "Plátano orgánico", "Betabel"],
+      lácteos: ["Skyr", "Leche de almendra", "Queso manchego", "Ricotta premium"],
+      extras: ["Mantequilla de almendra raw", "Semillas de hemp", "Aceite MCT", "Cacao nibs", "Miel de manuka"]
+    }
+  },
+  mantener: {
+    bajo: {
+      proteínas: ["Huevos", "Pollo", "Frijoles", "Lentejas", "Queso fresco"],
+      carbohidratos: ["Arroz", "Tortillas", "Pan integral", "Avena", "Papa"],
+      frutas_verduras: ["Fruta de temporada", "Jitomate", "Cebolla", "Ajo", "Chayote", "Calabacita"],
+      lácteos: ["Leche", "Yogur natural", "Queso fresco"],
+      extras: ["Aceite", "Limones", "Chile", "Epazote"]
+    },
+    medio: {
+      proteínas: ["Pechuga", "Atún", "Huevos", "Garbanzo", "Queso panela"],
+      carbohidratos: ["Pasta integral", "Quinoa", "Pan integral", "Arroz integral", "Camote"],
+      frutas_verduras: ["Aguacate", "Espinaca", "Jitomate cherry", "Manzana", "Naranja", "Pepino"],
+      lácteos: ["Yogur griego", "Queso cottage", "Leche"],
+      extras: ["Aceite de oliva", "Nueces", "Hummus", "Semillas de girasol"]
+    },
+    alto: {
+      proteínas: ["Salmón", "Tempeh", "Huevos orgánicos", "Camarón", "Atún fresco"],
+      carbohidratos: ["Pan masa madre", "Quinoa", "Arroz negro", "Lenteja beluga", "Brioche"],
+      frutas_verduras: ["Kale", "Granada", "Betabel", "Kiwi", "Frutas tropicales", "Hierba buena"],
+      lácteos: ["Yogur griego premium", "Queso de cabra", "Kéfir artesanal", "Brie"],
+      extras: ["Aceite de trufa", "Vinagre balsámico", "Miso premium", "Semillas mixtas", "Levadura nutricional"]
+    }
+  }
+};
+
+const TIPS = {
+  bajar: ["Reduce el consumo de azúcares simples y bebidas azucaradas — sustitúyelas por agua, agua mineral o té sin azúcar.", "Prioriza proteínas en cada comida: te ayudan a mantenerte satisfecha por más tiempo.", "Come despacio y sin distracciones; tu cerebro tarda 20 minutos en recibir la señal de saciedad.", "Prefiere métodos de cocción como vapor, horno o plancha en lugar de frituras.", "Duerme 7-8 horas; la falta de sueño aumenta el apetito y dificulta bajar de peso.", "Muévete aunque sea 30 minutos diarios — caminar rápido cuenta y marca la diferencia."],
+  muscular: ["Asegúrate de consumir proteína en cada tiempo de comida para apoyar la síntesis muscular.", "No saltes el desayuno — tu cuerpo necesita combustible para entrenar y recuperarse.", "Hidrátate bien: el músculo es 75% agua y la deshidratación reduce el rendimiento.", "Come dentro de los 45 minutos después de entrenar para aprovechar la ventana anabólica.", "No temas a los carbohidratos — son el combustible principal de tus músculos.", "El descanso es parte del entrenamiento; sin sueño reparador el músculo no crece."],
+  mantener: ["Mantén un horario de comidas regular — la consistencia es clave para el metabolismo.", "Escucha las señales de hambre y saciedad de tu cuerpo en lugar de comer por horario.", "Incluye variedad en tu dieta para asegurar todos los micronutrientes que necesitas.", "Prefiere alimentos mínimamente procesados y cocina en casa cuando sea posible.", "Hidrátate con 2 litros de agua al día como mínimo — el agua mejora todo.", "Disfruta ocasionalmente tus comidas favoritas sin culpa; el equilibrio es salud."]
+};
+
+// ── LOGIC ──
+function calcIMC(peso, estatura) {
+  const h = estatura / 100;
+  return (peso / (h * h)).toFixed(1);
+}
+function calcTMB(peso, estatura, edad, sexo) {
+  if (sexo === 'mujer') return 655 + (9.6 * peso) + (1.8 * estatura) - (4.7 * edad);
+  return 66 + (13.7 * peso) + (5 * estatura) - (6.8 * edad);
+}
+function calcCalorias(tmb, actividad, objetivo) {
+  const factores = { bajo: 1.2, medio: 1.55, alto: 1.725 };
+  let tdee = tmb * factores[actividad];
+  if (objetivo === 'bajar') tdee -= 400;
+  if (objetivo === 'muscular') tdee += 300;
+  return Math.round(tdee);
+}
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function getRandom(arr, n) {
+  const shuffled = [...arr].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, n);
+}
+
+function validar() {
+  const nombre = document.getElementById('nombre').value.trim();
+  const edad = document.getElementById('edad').value;
+  const peso = document.getElementById('peso').value;
+  const estatura = document.getElementById('estatura').value;
+  if (!nombre) { showToast('Por favor ingresa el nombre del paciente'); return false; }
+  if (!edad || edad < 10) { showToast('Ingresa una edad válida'); return false; }
+  if (!peso || peso < 30) { showToast('Ingresa un peso válido'); return false; }
+  if (!estatura || estatura < 100) { showToast('Ingresa una estatura válida'); return false; }
+  return true;
+}
+
+function calcICC(cintura, cadera, sexo) {
+  const icc = (cintura / cadera).toFixed(2);
+  const val = parseFloat(icc);
+
+  // Clasificación OMS según sexo
+  let nivel, badge, color;
+  if (sexo === 'mujer') {
+    if (val < 0.80)      { nivel = 'bajo';     badge = 'badge-bajo';     color = 'bajo'; }
+    else if (val < 0.85) { nivel = 'moderado'; badge = 'badge-moderado'; color = 'moderado'; }
+    else if (val < 0.90) { nivel = 'alto';     badge = 'badge-alto';     color = 'alto'; }
+    else                 { nivel = 'muy-alto'; badge = 'badge-muy-alto'; color = 'muy-alto'; }
+  } else {
+    if (val < 0.90)      { nivel = 'bajo';     badge = 'badge-bajo';     color = 'bajo'; }
+    else if (val < 0.95) { nivel = 'moderado'; badge = 'badge-moderado'; color = 'moderado'; }
+    else if (val < 1.00) { nivel = 'alto';     badge = 'badge-alto';     color = 'alto'; }
+    else                 { nivel = 'muy-alto'; badge = 'badge-muy-alto'; color = 'muy-alto'; }
+  }
+
+  const nivelLabel = { bajo: 'Riesgo bajo', moderado: 'Riesgo moderado', alto: 'Riesgo alto', 'muy-alto': 'Riesgo muy alto' };
+
+  const riesgos = {
+    bajo: [
+      { tipo: 'bajo', titulo: 'Riesgo metabólico', desc: 'Distribución de grasa favorable. Bajo riesgo de síndrome metabólico y diabetes tipo 2.' },
+      { tipo: 'bajo', titulo: 'Riesgo cardiovascular', desc: 'Perfil lipídico y presión arterial generalmente dentro de parámetros saludables.' },
+      { tipo: 'bajo', titulo: 'Riesgo clínico general', desc: 'Sin señales de alerta por distribución de grasa abdominal en este momento.' }
+    ],
+    moderado: [
+      { tipo: 'moderado', titulo: 'Riesgo metabólico moderado', desc: 'Posible acumulación incipiente de grasa visceral. Vigilar glucosa en ayuno y triglicéridos.' },
+      { tipo: 'moderado', titulo: 'Riesgo cardiovascular moderado', desc: 'Se recomienda revisión de perfil lipídico y presión arterial periódicamente.' },
+      { tipo: 'moderado', titulo: 'Acción recomendada', desc: 'Ajuste en alimentación, incrementar actividad física aeróbica y reducir estrés.' }
+    ],
+    alto: [
+      { tipo: 'alto', titulo: 'Riesgo metabólico alto', desc: 'Alta probabilidad de resistencia a la insulina, dislipidemia e hígado graso.' },
+      { tipo: 'alto', titulo: 'Riesgo cardiovascular alto', desc: 'Mayor riesgo de hipertensión, enfermedad coronaria y accidente cerebrovascular.' },
+      { tipo: 'alto', titulo: 'Riesgo clínico', desc: 'Se sugiere perfil metabólico completo: glucosa, insulina, HOMA-IR, perfil lipídico y función hepática.' }
+    ],
+    'muy-alto': [
+      { tipo: 'muy-alto', titulo: '⚠️ Riesgo metabólico muy alto', desc: 'Fuerte indicador de obesidad central. Riesgo elevado de diabetes tipo 2, síndrome metabólico y esteatosis hepática.' },
+      { tipo: 'muy-alto', titulo: '⚠️ Riesgo cardiovascular muy alto', desc: 'Riesgo significativo de infarto al miocardio, hipertensión severa y enfermedad renal crónica.' },
+      { tipo: 'muy-alto', titulo: '⚠️ Intervención urgente recomendada', desc: 'Derivar a médico para evaluación integral. Iniciar plan nutricional terapéutico y actividad física supervisada.' }
+    ]
+  };
+
+  return { icc, nivel, badge, color, nivelLabel: nivelLabel[nivel], riesgos: riesgos[nivel] };
+}
+
+function mostrarICC(cintura, cadera, sexo) {
+  if (!cintura || !cadera || cintura < 40 || cadera < 40) return;
+  const r = calcICC(cintura, cadera, sexo);
+
+  document.getElementById('icc-label').textContent =
+    `Cintura: ${cintura} cm · Cadera: ${cadera} cm · ICC: ${r.icc}`;
+
+  const colorNum = { bajo: '#22c55e', moderado: '#f59e0b', alto: '#ef4444', 'muy-alto': '#7c3aed' };
+
+  document.getElementById('icc-resultado').innerHTML = `
+    <div class="icc-grid">
+      <div class="icc-valor">
+        <div class="icc-numero" style="color:${colorNum[r.color]}">${r.icc}</div>
+        <div class="icc-etiqueta">ICC</div>
+        <div class="icc-badge ${r.badge}">${r.nivelLabel}</div>
+      </div>
+      <div class="icc-riesgos">
+        ${r.riesgos.map(item => `
+          <div class="icc-riesgo-item ${item.tipo}">
+            <div class="icc-dot"></div>
+            <div>
+              <div class="icc-riesgo-titulo">${item.titulo}</div>
+              <div class="icc-riesgo-desc">${item.desc}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  document.getElementById('card-icc').style.display = 'block';
+}
+
 async function generarPlan() {
   if (!validar()) return;
 
-  const nombre        = document.getElementById('nombre').value.trim();
-  const edad          = parseInt(document.getElementById('edad').value);
-  const peso          = parseFloat(document.getElementById('peso').value);
-  const estatura      = parseFloat(document.getElementById('estatura').value);
-  const sexo          = document.getElementById('sexo').value;
-  const objetivo      = document.getElementById('objetivo').value;
-  const actividad     = document.getElementById('actividad').value;
-  const presupuesto   = document.getElementById('presupuesto').value;
+  const nombre    = document.getElementById('nombre').value.trim();
+  const edad      = parseInt(document.getElementById('edad').value);
+  const peso      = parseFloat(document.getElementById('peso').value);
+  const estatura  = parseFloat(document.getElementById('estatura').value);
+  const sexo      = document.getElementById('sexo').value;
+  const objetivo  = document.getElementById('objetivo').value;
+  const actividad = document.getElementById('actividad').value;
+  const presupuesto  = document.getElementById('presupuesto').value;
   const restricciones = document.getElementById('restricciones').value.trim();
 
+  const cintura    = parseFloat(document.getElementById('cintura').value) || 0;
+  const cadera     = parseFloat(document.getElementById('cadera').value) || 0;
+
+  // Calcular localmente para pasarlos al prompt
   const imc      = calcIMC(peso, estatura);
   const tmb      = calcTMB(peso, estatura, edad, sexo);
   const calorias = calcCalorias(tmb, actividad, objetivo);
@@ -73,94 +1279,26 @@ async function generarPlan() {
   document.getElementById('results').classList.remove('visible');
   document.getElementById('empty-state').style.display = 'none';
 
-  function generarPlanDemoLocal() {
-    // Plan demo
-    const nivelObjetivo = PLANES?.[objetivo]?.[actividad] || PLANES?.[objetivo]?.medio;
-    if (!nivelObjetivo) throw new Error('No hay datos demo del plan para tu selección.');
-
-    const dias = ['Lunes','Martes','Miércoles','Jueves','Viernes'];
-
-    const plan_semanal = {};
-    dias.forEach((dia) => {
-      plan_semanal[dia] = {
-        desayuno: pick(nivelObjetivo.desayuno),
-        comida: pick(nivelObjetivo.comida),
-        cena: pick(nivelObjetivo.cena),
-        colacion1: pick(nivelObjetivo.colacion1),
-        colacion2: pick(nivelObjetivo.colacion2),
-      };
+  try {
+    const res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre, edad, peso, estatura, sexo, objetivo, actividad, presupuesto, restricciones, calorias, imc })
     });
 
-    // Lista del súper demo
-    const shopNivel = SHOPPING?.[objetivo]?.[actividad] || SHOPPING?.[objetivo]?.medio;
-    if (!shopNivel) throw new Error('No hay datos demo de lista del súper para tu selección.');
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
 
-    const proteinas = getRandom(shopNivel.proteínas || shopNivel.proteinas || [], 5);
-    const carbohidratos = getRandom(shopNivel.carbohidratos || [], 4);
-    const frutas_verduras = getRandom(shopNivel.frutas_verduras || [], 6);
+    document.getElementById('loading').classList.remove('active');
 
-    // Normaliza “lácteos” -> “lacteos” (lo espera tu UI)
-    const lacteosRaw = shopNivel.lácteos || shopNivel.lacteos || [];
-    const lacteos = getRandom(lacteosRaw, 3);
+    // ── ICC ──
+    mostrarICC(cintura, cadera, sexo);
 
-    const extras = getRandom(shopNivel.extras || [], 4);
-
-    const lista_super = {
-      proteinas,
-      carbohidratos,
-      frutas_verduras,
-      lacteos,
-      extras
-    };
-
-    // Macros (aprox)
-    const shares = (objetivo === 'bajar')
-      ? { p: 0.30, c: 0.40, f: 0.30 }
-      : (objetivo === 'muscular')
-        ? { p: 0.35, c: 0.40, f: 0.25 }
-        : { p: 0.30, c: 0.35, f: 0.35 }; // mantener
-
-    const proteina = Math.round((calorias * shares.p) / 4);
-    const carbohidratosM = Math.round((calorias * shares.c) / 4);
-    const grasas = Math.round((calorias * shares.f) / 9);
-
-    // Tips (demo)
-    const tipsSrc = TIPS?.[objetivo];
-    const tips = Array.isArray(tipsSrc) ? getRandom(tipsSrc, Math.min(6, tipsSrc.length)) : [];
-
-    const objLabels = { bajar: 'Bajar grasa', muscular: 'Masa muscular', mantener: 'Mantener peso' };
-
-    const mensaje_whatsapp =
-`Hola ${nombre} 👋
-
-Aquí está tu plan semanal (${objLabels[objetivo] || objetivo}) en versión demo (sin IA).
-
-Calorías: ${calorias} kcal/día
-Macros aprox: ${proteina}g proteína · ${carbohidratosM}g carbs · ${grasas}g grasas
-IMC: ${imc}
-
-Restricciones consideradas:
-${restricciones ? restricciones : '—'}
-
-Si quieres, dime cómo te sientes y lo ajusto.`;
-
-    return {
-      macros: { calorias, proteina, carbohidratos: carbohidratosM, grasas },
-      plan_semanal,
-      lista_super,
-      tips,
-      mensaje_whatsapp
-    };
-  }
-
-  function renderData(data) {
     // ── MACROS ──
     const m = data.macros;
     const objLabels = { bajar: 'Bajar grasa', muscular: 'Masa muscular', mantener: 'Mantener peso' };
-
     document.getElementById('paciente-label').textContent =
       `${nombre} · ${edad} años · ${peso}kg · ${estatura}cm · IMC: ${imc} · ${objLabels[objetivo]}`;
-
     document.getElementById('macro-row').innerHTML = `
       <div class="macro-pill"><span>${m.calorias}</span> kcal/día</div>
       <div class="macro-pill"><span>${m.proteina}g</span> proteína</div>
@@ -172,9 +1310,8 @@ Si quieres, dime cómo te sientes y lo ajusto.`;
     const dias = ['Lunes','Martes','Miércoles','Jueves','Viernes'];
     let planHTML = '';
     dias.forEach((dia, i) => {
-      const d = data.plan_semanal?.[dia];
+      const d = data.plan_semanal[dia];
       if (!d) return;
-
       planHTML += `<div class="result-section-title">${dia}</div>`;
       planHTML += `<div class="meal-grid">
         <div class="meal-card"><div class="meal-label">🌅 Desayuno</div><div class="meal-desc">${d.desayuno}</div></div>
@@ -186,85 +1323,125 @@ Si quieres, dime cómo te sientes y lo ajusto.`;
       if (i < dias.length - 1) planHTML += '<div class="divider" style="margin:16px 0"></div>';
     });
     document.getElementById('plan-comidas').innerHTML = planHTML;
-        document.getElementById('plan-comidas').innerHTML = planHTML;
-            // ── LISTA DEL SÚPER ──
-    const s = data.lista_super || {};
-    const catIcons = { proteinas:'🥩', carbohidratos:'🌾', frutas_verduras:'🥦', lacteos:'🥛', extras:'🫙' };
 
+    // ── LISTA DEL SÚPER ──
+    const s = data.lista_super;
+    const catIcons = { proteinas:'🥩', carbohidratos:'🌾', frutas_verduras:'🥦', lacteos:'🥛', extras:'🫙' };
     let shopHTML = '<div class="shop-cats">';
     for (const [cat, items] of Object.entries(s)) {
-      const safeItems = Array.isArray(items) ? items : [];
-      if (!safeItems.length) continue;
-
-      const label = cat.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
-
+      const label = cat.replace(/_/g,' ').replace(/\b\w/g, c => c.toUpperCase());
       shopHTML += `<div class="shop-cat">
         <div class="shop-cat-title">${catIcons[cat] || '•'} ${label}</div>
-        <ul>${safeItems.map(i => `<li>${i}</li>`).join('')}</ul>
+        <ul>${items.map(i => `<li>${i}</li>`).join('')}</ul>
       </div>`;
     }
     shopHTML += '</div>';
-
+    if (restricciones) shopHTML += `<p style="margin-top:12px;font-size:0.8rem;color:var(--mid-gray)">⚠️ Restricciones consideradas: <strong>${restricciones}</strong></p>`;
     document.getElementById('lista-super').innerHTML = shopHTML;
 
     // ── TIPS ──
-    const tips = Array.isArray(data.tips) ? data.tips : [];
-    document.getElementById('tips-list').innerHTML = tips.map((t, i) =>
-      `<div class="tip-item">
-        <div class="tip-num">${i + 1}</div>
-        <div class="tip-text">${t}</div>
-      </div>`
+    document.getElementById('tips-list').innerHTML = data.tips.map((t, i) =>
+      `<div class="tip-item"><div class="tip-num">${i+1}</div><div class="tip-text">${t}</div></div>`
     ).join('');
 
     // ── WHATSAPP ──
-    document.getElementById('wa-msg').textContent = data.mensaje_whatsapp || '';
-    window._waMsgText = data.mensaje_whatsapp || '';
+    document.getElementById('wa-msg').textContent = data.mensaje_whatsapp;
+    window._waMsgText = data.mensaje_whatsapp;
 
-    // mostrar resultados
     document.getElementById('empty-state').style.display = 'none';
     document.getElementById('results').classList.add('visible');
     document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
 
-  // ── decide demo vs IA ──
-  let data;
-  try {
-    if (window.__modo === 'admin') {
-      const res = await fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nombre, edad, peso, estatura, sexo,
-          objetivo, actividad, presupuesto, restricciones,
-          calorias, imc
-        })
-      });
-
-      if (!res.ok) {
-        const txt = await res.text().catch(() => '');
-        throw new Error(`IA HTTP ${res.status} ${txt ? '- ' + txt.slice(0,200) : ''}`);
-      }
-
-      data = await res.json();
-      if (data?.error) throw new Error(data.error);
-    } else {
-      // PRUEBA sin IA
-      data = generarPlanDemoLocal();
-    }
-
-    // valida mínimo para no romper render
-    if (!data?.macros || !data?.plan_semanal || !data?.lista_super) {
-      throw new Error('IA devolvió JSON incompleto.');
+    // Mostrar acciones admin si aplica
+    if (window._esAdmin) {
+      const acc = document.getElementById('acciones-admin');
+      acc.style.display = 'flex';
+      const btnWa = document.getElementById('btn-wa-directo');
+      if (btnWa) btnWa.style.display = 'inline-flex';
     }
 
   } catch (err) {
-    console.warn('Fallback a demo:', err);
-    showToast('⚠️ No se pudo usar IA. Usando demo local...');
-    data = generarPlanDemoLocal();
+    document.getElementById('loading').classList.remove('active');
+    document.getElementById('empty-state').style.display = 'block';
+    showToast('❌ ' + (err.message || 'Error al generar el plan. Intenta de nuevo.'));
   }
-
-  renderData(data);
-  document.getElementById('loading').classList.remove('active');
 }
 
-        
+function generarPDF() {
+  const resultados = document.getElementById('results');
+  if (!resultados || !resultados.classList.contains('visible')) {
+    showToast('Primero genera un plan'); return;
+  }
+  const nombre = document.getElementById('nombre').value.trim() || 'Paciente';
+  // Abrir ventana de impresión solo con los resultados
+  const contenido = resultados.innerHTML;
+  const ventana = window.open('', '_blank');
+  ventana.document.write(`
+    <!DOCTYPE html><html lang="es"><head>
+    <meta charset="UTF-8">
+    <title>Plan Nutricional — ${nombre}</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+      body { font-family: 'DM Sans', sans-serif; color: #2b2d2e; padding: 32px; max-width: 860px; margin: 0 auto; }
+      h1 { font-family: 'DM Serif Display', serif; font-size: 1.8rem; margin-bottom: 4px; }
+      .subtitle { color: #6b7280; font-size: 0.9rem; margin-bottom: 32px; }
+      .card { border: 1px solid #e8eceb; border-radius: 12px; padding: 20px; margin-bottom: 20px; break-inside: avoid; }
+      .card-title { font-weight: 700; font-size: 1rem; margin-bottom: 12px; }
+      .macro-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+      .macro-pill { background: #edf4ee; border-radius: 8px; padding: 6px 12px; font-size: 0.85rem; }
+      .macro-pill span { font-weight: 700; color: #7a9e7e; }
+      .meal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+      .meal-card { background: #edf4ee; border-radius: 8px; padding: 12px; border-left: 3px solid #7a9e7e; }
+      .meal-card.snack { background: #f0d5cb; border-left-color: #c9856a; }
+      .meal-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: #7a9e7e; margin-bottom: 4px; }
+      .meal-card.snack .meal-label { color: #c9856a; }
+      .meal-desc { font-size: 0.88rem; }
+      .result-section-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: #6b7280; margin: 16px 0 10px; letter-spacing: 0.07em; }
+      .shop-cats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+      .shop-cat { border: 1px solid #e8eceb; border-radius: 8px; padding: 12px; }
+      .shop-cat-title { font-size: 0.78rem; font-weight: 700; color: #7a9e7e; margin-bottom: 6px; }
+      .shop-cat ul { list-style: none; padding: 0; }
+      .shop-cat li { font-size: 0.84rem; padding: 2px 0; }
+      .shop-cat li::before { content: '✓ '; color: #7a9e7e; font-weight: 700; }
+      .tips-list { display: flex; flex-direction: column; gap: 8px; }
+      .tip-item { display: flex; gap: 10px; background: #edf4ee; border-radius: 8px; padding: 10px 12px; }
+      .tip-num { width: 20px; height: 20px; border-radius: 50%; background: #7a9e7e; color: white; font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+      .tip-text { font-size: 0.86rem; }
+      .wa-box { background: #e7f5e8; border: 1px solid #c5e1c6; border-radius: 8px; padding: 14px; font-size: 0.88rem; white-space: pre-wrap; line-height: 1.6; }
+      .demo-watermark, #btn-wa-directo, .btn { display: none !important; }
+      @media print { body { padding: 16px; } }
+    </style>
+    </head><body>
+    <h1>Plan Nutricional</h1>
+    <div class="subtitle">Paciente: ${nombre} · Generado con NutriCopilot</div>
+    ${contenido}
+    <script>window.onload = () => { window.print(); }<\/script>
+    </body></html>
+  `);
+  ventana.document.close();
+}
+
+function enviarWhatsApp() {
+  if (!window._waMsgText) { showToast('Primero genera un plan'); return; }
+  let numero = document.getElementById('whatsapp-paciente').value.trim().replace(/\D/g, '');
+  if (!numero) { showToast('Ingresa el número WhatsApp del paciente'); return; }
+  // Agregar 52 si no tiene código de país
+  if (numero.length === 10) numero = '52' + numero;
+  const texto = encodeURIComponent(window._waMsgText);
+  window.open(`https://wa.me/${numero}?text=${texto}`, '_blank');
+}
+
+function copiarMensaje() {
+  if (!window._waMsgText) { showToast('Primero genera un plan'); return; }
+  navigator.clipboard.writeText(window._waMsgText).then(() => showToast('✅ Mensaje copiado'));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
