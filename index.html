@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -1124,7 +1123,7 @@ async function generarPlan() {
   document.getElementById('empty-state').style.display = 'none';
 
   try {
-    const res = await fetch('/.netlify/functions/generar-plan', {
+    const res = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nombre, edad, peso, estatura, sexo, objetivo, actividad, presupuesto, restricciones, calorias, imc })
