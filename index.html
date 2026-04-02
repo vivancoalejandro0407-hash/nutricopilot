@@ -187,16 +187,3 @@ Si quieres, dime cómo te sientes y lo ajusto.`;
     });
     document.getElementById('plan-comidas').innerHTML = planHTML;
 
-    // ── LISTA DEL SÚPER ──
-    const s = data.lista_super ||
-        function copiarMensaje() {
-  if (!window._waMsgText) { showToast('Primero genera un plan'); return; }
-  navigator.clipboard.writeText(window._waMsgText).then(() => showToast('✅ Mensaje copiado'));
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
-}
