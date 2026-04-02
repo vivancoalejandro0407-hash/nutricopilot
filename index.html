@@ -1,37 +1,11 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NutriCopilot — Planes Nutricionales en 1 Minuto</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-  /* Todo tu CSS anterior queda igual (lo copio completo para que no tengas que pegar dos veces) */
-  :root {
-    --sage: #7a9e7e; --sage-light: #a8c5ac; --sage-pale: #edf4ee; --cream: #faf8f3;
-    --warm-white: #ffffff; --clay: #c9856a; --clay-light: #f0d5cb; --charcoal: #2b2d2e;
-    --mid-gray: #6b7280; --light-gray: #e8eceb; --card-shadow: 0 4px 24px rgba(43,45,46,0.08);
-    --card-shadow-hover: 0 8px 40px rgba(43,45,46,0.14); --radius: 18px; --radius-sm: 10px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--charcoal); min-height: 100vh; overflow-x: hidden; }
-  /* ... (todo el resto de tu CSS va aquí exactamente igual que en tu código original) ... */
-  /* Para no hacer este mensaje eterno, asumo que pegas todo tu <style> original aquí */
-</style>
-</head>
-<body>
-<!-- Todo tu HTML hasta antes del <script> queda igual (landing, pricing, header, hero, demo-notice, main-wrap, cards, etc.) -->
-
-<!-- Solo cambio importante: el botón ahora llama a generarPlan() que ya está corregido -->
-
-<script>
-// ==================== TU CÓDIGO CORREGIDO Y COMPLETO ====================
-
-// AUTH (igual que tenías)
+// ══ AUTH ══
 const USUARIOS = {
-  "nutriologa": "nutricopilot2024",
-  "admin": "Admin2024!"
+  "nutriologa": "nutricopilot2024",   // demo
+  "admin": "Admin2024!"               // acceso real — cambia esta clave antes de publicar
 };
+
+// modo: 'demo' (sin IA) o 'admin' (con IA)
+window.__modo = 'demo';
 
 function intentarLogin() {
   const user = document.getElementById('login-user').value.trim().toLowerCase();
@@ -41,187 +15,183 @@ function intentarLogin() {
 
   if (USUARIOS[userKey] && USUARIOS[userKey] === pass) {
     err.classList.remove('show');
+
+    const isAdmin = userKey === 'admin';
+    window.__modo = isAdmin ? 'admin' : 'demo';
+
     document.getElementById('login-panel').style.display = 'none';
     document.getElementById('form-panel').style.display = 'block';
     document.getElementById('demo-banner').classList.add('show');
     document.getElementById('results-col').style.display = 'block';
-  } else {
-    err.classList.add('show');
-    document.getElementById('login-pass').value = '';
-    document.getElementById('login-pass').focus();
+    return;
   }
+
+  err.classList.add('show');
+  document.getElementById('login-pass').value = '';
+  document.getElementById('login-pass').focus();
 }
 
 function cerrarSesion() {
+  window.__modo = 'demo';
+
   document.getElementById('login-panel').style.display = 'block';
   document.getElementById('form-panel').style.display = 'none';
   document.getElementById('demo-banner').classList.remove('show');
   document.getElementById('results-col').style.display = 'none';
+
   document.getElementById('results').classList.remove('visible');
   document.getElementById('empty-state').style.display = 'block';
+
   document.getElementById('login-user').value = '';
   document.getElementById('login-pass').value = '';
+  document.getElementById('login-error').classList.remove('show');
 }
 
-// PLANES, SHOPPING y TIPS (los dejaste perfectos, los mantengo)
-const PLANES = { /* ... tu objeto PLANES completo ... */ };
-const SHOPPING = { /* ... tu objeto SHOPPING completo ... */ };
-const TIPS = { /* ... tu objeto TIPS completo ... */ };
-
-// Funciones de cálculo
-function calcIMC(peso, estatura) {
-  const h = estatura / 100;
-  return (peso / (h * h)).toFixed(1);
-}
-
-function calcTMB(peso, estatura, edad, sexo) {
-  if (sexo === 'mujer') return 655 + (9.6 * peso) + (1.8 * estatura) - (4.7 * edad);
-  return 66 + (13.7 * peso) + (5 * estatura) - (6.8 * edad);
-}
-
-function calcCalorias(tmb, actividad, objetivo) {
-  const factores = { bajo: 1.2, medio: 1.55, alto: 1.725 };
-  let tdee = tmb * factores[actividad];
-  if (objetivo === 'bajar') tdee -= 400;
-  if (objetivo === 'muscular') tdee += 300;
-  return Math.round(tdee);
-}
-
-function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-function getRandom(arr, n) {
-  const shuffled = [...arr].sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, n);
-}
-
-// Función principal corregida (la que realmente importa)
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && document.getElementById('login-panel').style.display !== 'none') {
+    intentarLogin();
+  }
+});
 async function generarPlan() {
-  const nombre = document.getElementById('nombre').value.trim();
-  const edad = parseInt(document.getElementById('edad').value);
-  const peso = parseFloat(document.getElementById('peso').value);
-  const estatura = parseFloat(document.getElementById('estatura').value);
-  const sexo = document.getElementById('sexo').value;
-  const objetivo = document.getElementById('objetivo').value;
-  const actividad = document.getElementById('actividad').value;
-  const presupuesto = document.getElementById('presupuesto').value;
+  if (!validar()) return;
+
+  const nombre        = document.getElementById('nombre').value.trim();
+  const edad          = parseInt(document.getElementById('edad').value);
+  const peso          = parseFloat(document.getElementById('peso').value);
+  const estatura      = parseFloat(document.getElementById('estatura').value);
+  const sexo          = document.getElementById('sexo').value;
+  const objetivo      = document.getElementById('objetivo').value;
+  const actividad     = document.getElementById('actividad').value;
+  const presupuesto   = document.getElementById('presupuesto').value;
   const restricciones = document.getElementById('restricciones').value.trim();
 
-  if (!nombre || !edad || !peso || !estatura) {
-    showToast('Por favor completa nombre, edad, peso y estatura');
-    return;
-  }
+  const imc      = calcIMC(peso, estatura);
+  const tmb      = calcTMB(peso, estatura, edad, sexo);
+  const calorias = calcCalorias(tmb, actividad, objetivo);
 
   document.getElementById('loading').classList.add('active');
   document.getElementById('results').classList.remove('visible');
   document.getElementById('empty-state').style.display = 'none';
 
-  // Pequeña espera para simular generación (queda más profesional)
-  await new Promise(r => setTimeout(r, 800));
+  function generarPlanDemoLocal() {
+    // Plan demo
+    const nivelObjetivo = PLANES?.[objetivo]?.[actividad] || PLANES?.[objetivo]?.medio;
+    if (!nivelObjetivo) throw new Error('No hay datos demo del plan para tu selección.');
 
-  const imc = calcIMC(peso, estatura);
-  const tmb = calcTMB(peso, estatura, edad, sexo);
-  const calorias = calcCalorias(tmb, actividad, objetivo);
+    const dias = ['Lunes','Martes','Miércoles','Jueves','Viernes'];
 
-  // Generar plan usando tus datos existentes
-  const nivel = PLANES[objetivo][actividad] || PLANES[objetivo].medio;
-  const dias = ['Lunes','Martes','Miércoles','Jueves','Viernes'];
+    const plan_semanal = {};
+    dias.forEach((dia) => {
+      plan_semanal[dia] = {
+        desayuno: pick(nivelObjetivo.desayuno),
+        comida: pick(nivelObjetivo.comida),
+        cena: pick(nivelObjetivo.cena),
+        colacion1: pick(nivelObjetivo.colacion1),
+        colacion2: pick(nivelObjetivo.colacion2),
+      };
+    });
 
-  let planSemanal = {};
-  dias.forEach(dia => {
-    planSemanal[dia] = {
-      desayuno: pick(nivel.desayuno),
-      comida: pick(nivel.comida),
-      cena: pick(nivel.cena),
-      colacion1: pick(nivel.colacion1),
-      colacion2: pick(nivel.colacion2)
+    // Lista del súper demo
+    const shopNivel = SHOPPING?.[objetivo]?.[actividad] || SHOPPING?.[objetivo]?.medio;
+    if (!shopNivel) throw new Error('No hay datos demo de lista del súper para tu selección.');
+
+    const proteinas = getRandom(shopNivel.proteínas || shopNivel.proteinas || [], 5);
+    const carbohidratos = getRandom(shopNivel.carbohidratos || [], 4);
+    const frutas_verduras = getRandom(shopNivel.frutas_verduras || [], 6);
+
+    // Normaliza “lácteos” -> “lacteos” (lo espera tu UI)
+    const lacteosRaw = shopNivel.lácteos || shopNivel.lacteos || [];
+    const lacteos = getRandom(lacteosRaw, 3);
+
+    const extras = getRandom(shopNivel.extras || [], 4);
+
+    const lista_super = {
+      proteinas,
+      carbohidratos,
+      frutas_verduras,
+      lacteos,
+      extras
     };
-  });
 
-  // Lista del súper
-  const shopNivel = SHOPPING[objetivo][actividad] || SHOPPING[objetivo].medio;
-  const listaSuper = {
-    proteinas: getRandom(shopNivel.proteínas, 5),
-    carbohidratos: getRandom(shopNivel.carbohidratos, 4),
-    frutas_verduras: getRandom(shopNivel.frutas_verduras, 6),
-    lacteos: getRandom(shopNivel.lacteos || [], 3),
-    extras: getRandom(shopNivel.extras, 4)
-  };
+    // Macros (aprox)
+    const shares = (objetivo === 'bajar')
+      ? { p: 0.30, c: 0.40, f: 0.30 }
+      : (objetivo === 'muscular')
+        ? { p: 0.35, c: 0.40, f: 0.25 }
+        : { p: 0.30, c: 0.35, f: 0.35 }; // mantener
 
-  // Macros aproximadas (puedes ajustar)
-  const macros = {
-    calorias: calorias,
-    proteina: Math.round(calorias * 0.30 / 4),
-    carbohidratos: Math.round(calorias * 0.45 / 4),
-    grasas: Math.round(calorias * 0.25 / 9)
-  };
+    const proteina = Math.round((calorias * shares.p) / 4);
+    const carbohidratosM = Math.round((calorias * shares.c) / 4);
+    const grasas = Math.round((calorias * shares.f) / 9);
 
-  // Tips
-  const tips = getRandom(TIPS[objetivo], 5);
+    // Tips (demo)
+    const tipsSrc = TIPS?.[objetivo];
+    const tips = Array.isArray(tipsSrc) ? getRandom(tipsSrc, Math.min(6, tipsSrc.length)) : [];
 
-  // Mensaje WhatsApp
-  const waMsg = `¡Hola ${nombre.split(' ')[0]}! 🌿\n\nAquí tienes tu plan nutricional personalizado:\n\nObjetivo: ${objetivo === 'bajar' ? 'Bajar grasa' : objetivo === 'muscular' ? 'Ganar masa muscular' : 'Mantener peso'}\nCalorías diarias: ${calorias} kcal\n\nTe adjunto el plan completo, la lista del súper y recomendaciones.\n\nCualquier duda estoy aquí para ayudarte 💪\n\n¡Éxito esta semana!`;
+    const objLabels = { bajar: 'Bajar grasa', muscular: 'Masa muscular', mantener: 'Mantener peso' };
 
-  // Actualizar interfaz
-  document.getElementById('paciente-label').textContent = 
-    `${nombre} · ${edad} años · ${peso}kg · ${estatura}cm · IMC: ${imc}`;
+    const mensaje_whatsapp =
+`Hola ${nombre} 👋
 
-  document.getElementById('macro-row').innerHTML = `
-    <div class="macro-pill"><span>${macros.calorias}</span> kcal/día</div>
-    <div class="macro-pill"><span>${macros.proteina}g</span> proteína</div>
-    <div class="macro-pill clay-pill"><span>${macros.carbohidratos}g</span> carbs</div>
-    <div class="macro-pill"><span>${macros.grasas}g</span> grasas</div>
-  `;
+Aquí está tu plan semanal (${objLabels[objetivo] || objetivo}) en versión demo (sin IA).
 
-  // Plan semanal
-  let planHTML = '';
-  dias.forEach((dia, i) => {
-    const d = planSemanal[dia];
-    planHTML += `<div class="result-section-title">${dia}</div>`;
-    planHTML += `<div class="meal-grid">
-      <div class="meal-card"><div class="meal-label">🌅 Desayuno</div><div class="meal-desc">${d.desayuno}</div></div>
-      <div class="meal-card"><div class="meal-label">☀️ Comida</div><div class="meal-desc">${d.comida}</div></div>
-      <div class="meal-card"><div class="meal-label">🌙 Cena</div><div class="meal-desc">${d.cena}</div></div>
-      <div class="meal-card snack"><div class="meal-label">🍎 Colación 1</div><div class="meal-desc">${d.colacion1}</div></div>
-      <div class="meal-card snack"><div class="meal-label">🥜 Colación 2</div><div class="meal-desc">${d.colacion2}</div></div>
-    </div>`;
-    if (i < dias.length - 1) planHTML += '<div class="divider" style="margin:16px 0"></div>';
-  });
-  document.getElementById('plan-comidas').innerHTML = planHTML;
+Calorías: ${calorias} kcal/día
+Macros aprox: ${proteina}g proteína · ${carbohidratosM}g carbs · ${grasas}g grasas
+IMC: ${imc}
 
-  // Lista del súper
-  const catIcons = { proteinas:'🥩', carbohidratos:'🌾', frutas_verduras:'🥦', lacteos:'🥛', extras:'🫙' };
-  let shopHTML = '<div class="shop-cats">';
-  for (const [cat, items] of Object.entries(listaSuper)) {
-    if (items.length === 0) continue;
-    const label = cat.replace(/_/g,' ').replace(/\b\w/g, c => c.toUpperCase());
-    shopHTML += `<div class="shop-cat">
-      <div class="shop-cat-title">${catIcons[cat] || '•'} ${label}</div>
-      <ul>${items.map(i => `<li>${i}</li>`).join('')}</ul>
-    </div>`;
+Restricciones consideradas:
+${restricciones ? restricciones : '—'}
+
+Si quieres, dime cómo te sientes y lo ajusto.`;
+
+    return {
+      macros: { calorias, proteina, carbohidratos: carbohidratosM, grasas },
+      plan_semanal,
+      lista_super,
+      tips,
+      mensaje_whatsapp
+    };
   }
-  shopHTML += '</div>';
-  if (restricciones) shopHTML += `<p style="margin-top:12px;font-size:0.8rem;color:var(--mid-gray)">⚠️ Restricciones consideradas: <strong>${restricciones}</strong></p>`;
-  document.getElementById('lista-super').innerHTML = shopHTML;
 
-  // Tips
-  document.getElementById('tips-list').innerHTML = tips.map((t, i) =>
-    `<div class="tip-item"><div class="tip-num">${i+1}</div><div class="tip-text">${t}</div></div>`
-  ).join('');
+  function renderData(data) {
+    // ── MACROS ──
+    const m = data.macros;
+    const objLabels = { bajar: 'Bajar grasa', muscular: 'Masa muscular', mantener: 'Mantener peso' };
 
-  // WhatsApp
-  document.getElementById('wa-msg').textContent = waMsg;
-  window._waMsgText = waMsg;
+    document.getElementById('paciente-label').textContent =
+      `${nombre} · ${edad} años · ${peso}kg · ${estatura}cm · IMC: ${imc} · ${objLabels[objetivo]}`;
 
-  document.getElementById('loading').classList.remove('active');
-  document.getElementById('results').classList.add('visible');
-  document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
-}
+    document.getElementById('macro-row').innerHTML = `
+      <div class="macro-pill"><span>${m.calorias}</span> kcal/día</div>
+      <div class="macro-pill"><span>${m.proteina}g</span> proteína</div>
+      <div class="macro-pill clay-pill"><span>${m.carbohidratos}g</span> carbs</div>
+      <div class="macro-pill"><span>${m.grasas}g</span> grasas</div>
+    `;
 
-function copiarMensaje() {
-  if (!window._waMsgText) {
-    showToast('Primero genera un plan');
-    return;
-  }
-  navigator.clipboard.writeText(window._waMsgText).then(() => showToast('✅ Mensaje copiado al portapapeles'));
+    // ── PLAN SEMANAL ──
+    const dias = ['Lunes','Martes','Miércoles','Jueves','Viernes'];
+    let planHTML = '';
+    dias.forEach((dia, i) => {
+      const d = data.plan_semanal?.[dia];
+      if (!d) return;
+
+      planHTML += `<div class="result-section-title">${dia}</div>`;
+      planHTML += `<div class="meal-grid">
+        <div class="meal-card"><div class="meal-label">🌅 Desayuno</div><div class="meal-desc">${d.desayuno}</div></div>
+        <div class="meal-card"><div class="meal-label">☀️ Comida</div><div class="meal-desc">${d.comida}</div></div>
+        <div class="meal-card"><div class="meal-label">🌙 Cena</div><div class="meal-desc">${d.cena}</div></div>
+        <div class="meal-card snack"><div class="meal-label">🍎 Colación 1</div><div class="meal-desc">${d.colacion1}</div></div>
+        <div class="meal-card snack"><div class="meal-label">🥜 Colación 2</div><div class="meal-desc">${d.colacion2}</div></div>
+      </div>`;
+      if (i < dias.length - 1) planHTML += '<div class="divider" style="margin:16px 0"></div>';
+    });
+    document.getElementById('plan-comidas').innerHTML = planHTML;
+
+    // ── LISTA DEL SÚPER ──
+    const s = data.lista_super ||
+        function copiarMensaje() {
+  if (!window._waMsgText) { showToast('Primero genera un plan'); return; }
+  navigator.clipboard.writeText(window._waMsgText).then(() => showToast('✅ Mensaje copiado'));
 }
 
 function showToast(msg) {
@@ -230,13 +200,3 @@ function showToast(msg) {
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2800);
 }
-
-// Cerrar login con Enter
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && document.getElementById('login-panel').style.display !== 'none') {
-    intentarLogin();
-  }
-});
-</script>
-</body>
-</html>
