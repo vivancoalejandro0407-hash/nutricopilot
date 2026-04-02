@@ -12,6 +12,29 @@ function extractJson(text) {
   return JSON.parse(match[0]);
 }
 
+// 🧠 ICC controlado por backend (NO IA)
+function interpretarICC(icc, sexo) {
+  if (sexo === "Mujer") {
+    if (icc < 0.80) return { nivel: "bajo", mensaje: "Riesgo bajo" };
+    if (icc < 0.85) return { nivel: "moderado", mensaje: "Riesgo moderado" };
+    return {
+      nivel: "alto",
+      mensaje: "Riesgo aumentado de acumulación abdominal. Se recomienda mejorar hábitos y seguimiento."
+    };
+  }
+
+  if (sexo === "Hombre") {
+    if (icc < 0.90) return { nivel: "bajo", mensaje: "Riesgo bajo" };
+    if (icc < 1.00) return { nivel: "moderado", mensaje: "Riesgo moderado" };
+    return {
+      nivel: "alto",
+      mensaje: "Riesgo aumentado de acumulación abdominal. Se recomienda mejorar hábitos y seguimiento."
+    };
+  }
+
+  return null;
+}
+
 module.exports = async (req, res) => {
   try {
     if (req.method !== "POST") {
@@ -36,15 +59,18 @@ module.exports = async (req, res) => {
       presupuesto,
       restricciones,
       calorias,
-      imc
+      imc,
+      cintura,
+      cadera
     } = payload || {};
 
     if (!nombre || !objetivo || !actividad || !calorias || !sexo) {
       return res.status(400).json({ error: "Payload incompleto." });
     }
 
-    // 🔥 Ajuste mínimo de calorías (evita planes extremos)
+    // 🔒 BLINDAR CALORÍAS
     let caloriasAjustadas = calorias;
+
     if (sexo === "Mujer" && calorias < 1200) caloriasAjustadas = 1200;
     if (sexo === "Hombre" && calorias < 1400) caloriasAjustadas = 1400;
 
@@ -55,55 +81,28 @@ module.exports = async (req, res) => {
 
     const anthropic = new Anthropic({ apiKey });
 
-    // 🧠 SYSTEM PROMPT PRO (CLÍNICO + MÉXICO + SIN ALARMISMO)
+    // 🧠 SYSTEM PROMPT CONTROLADO
     const system = `
 Eres un nutriólogo clínico profesional especializado en población mexicana.
 
-Tu objetivo es generar planes nutricionales:
+Generas planes nutricionales:
 - Clínicamente coherentes
-- Realistas para México
+- Económicos y realistas en México
 - Sin alarmismo
-- Económicamente viables
+- Claros y prácticos
 
-REGLAS OBLIGATORIAS:
+REGLAS:
 
-1. COHERENCIA CLÍNICA
-- Usa correctamente el sexo del paciente.
-- NO generes diagnósticos exagerados.
-- Si IMC es normal, NO hables de obesidad ni riesgos severos.
+1. NO exageres riesgos ni uses lenguaje alarmista.
+2. NO diagnostiques enfermedades.
+3. Respeta EXACTAMENTE las calorías proporcionadas.
+4. Usa alimentos accesibles si el presupuesto es bajo:
+   huevo, pollo, atún, sardina, frijoles, lentejas, arroz, avena, tortillas.
+5. Evita alimentos caros (salmón, quinoa, frutos rojos caros).
+6. Plan simple, repetible y fácil de preparar.
+7. Tono profesional, claro y motivador.
 
-2. INTERPRETACIÓN DE RIESGO
-- Usa términos: bajo, moderado o alto.
-- NO uses "urgente", "muy alto", "riesgo extremo".
-- Mantén lenguaje prudente y profesional.
-
-3. CALORÍAS
-- Respeta las calorías dadas.
-- Ya vienen ajustadas, NO las modifiques.
-
-4. PROTEÍNA
-- Asegura que sea suficiente para preservar masa muscular.
-
-5. PRESUPUESTO (CRÍTICO)
-Si presupuesto = "bajo":
-- Usa alimentos accesibles en México:
-  huevo, pollo, atún, sardina, frijoles, lentejas, arroz, avena, tortillas
-- EVITA:
-  salmón, quinoa, frutos rojos caros, almendras frecuentes
-
-6. PLAN
-- 5 comidas por día
-- Fácil de preparar
-- Porciones claras
-
-7. TONO
-- Profesional
-- Claro
-- Motivador
-- SIN asustar
-
-8. FORMATO
-Devuelve ÚNICAMENTE JSON válido, sin texto adicional.
+Devuelve SOLO JSON válido.
 `.trim();
 
     const userPrompt = `
@@ -133,10 +132,10 @@ REQUISITOS:
 - 5 comidas por día
 - Porciones claras
 - Lista del súper realista en México
-- 6 tips útiles y accionables
-- Mensaje WhatsApp profesional, breve y claro
+- 6 tips útiles
+- Mensaje WhatsApp claro y profesional
 
-ESTRUCTURA JSON EXACTA:
+ESTRUCTURA JSON:
 
 {
   "macros": { "calorias": number, "proteina": number, "carbohidratos": number, "grasas": number },
@@ -174,7 +173,30 @@ Devuelve SOLO JSON válido.
 
     const data = extractJson(text);
 
-    res.status(200).json(data);
+    // 🔒 VALIDACIÓN FINAL CALORÍAS
+    if (data.macros?.calorias !== caloriasAjustadas) {
+      data.macros.calorias = caloriasAjustadas;
+    }
+
+    // 🧠 ICC FINAL
+    let iccData = null;
+
+    if (cintura && cadera) {
+      const icc = cintura / cadera;
+      const interpretacion = interpretarICC(icc, sexo);
+
+      iccData = {
+        valor: icc.toFixed(2),
+        nivel: interpretacion?.nivel,
+        mensaje: interpretacion?.mensaje
+      };
+    }
+
+    res.status(200).json({
+      ...data,
+      icc: iccData
+    });
+
   } catch (err) {
     res.status(500).json({ error: err?.message || "Error al generar con IA" });
   }
