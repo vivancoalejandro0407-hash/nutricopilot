@@ -1,97 +1,114 @@
 // api/generate.js
+const { Anthropic } = require("@anthropic-ai/sdk");
 
-// 1. CONFIGURACIÓN CLAVE: Cambiamos a 'edge' para que la función no muera a los 10 segundos.
-export const config = {
-  runtime: 'edge',
-};
-
-export default async function handler(req) {
-  // En Edge Runtime no usamos res.status(), usamos el estándar de Response de la Web.
-  if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Método no permitido' }), {
-      status: 405,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-
-  try {
-    const body = await req.json();
-    const {
-      nombre = '',
-      edad = '',
-      peso = '',
-      estatura = '',
-      sexo = '',
-      objetivo = 'mantener',
-      actividad = 'medio',
-      presupuesto = 'medio',
-      restricciones = '',
-      calorias = '',
-      imc = ''
-    } = body || {};
-
-    // 2. OPTIMIZACIÓN DEL PROMPT: Pedimos solo 3 días para asegurar que Claude termine antes de que Vercel corte la conexión.
-    const prompt = `Eres un nutriólogo profesional mexicano, experto en planes personalizados y realistas.
-Paciente: ${nombre}, ${edad} años, ${peso}kg, ${estatura}cm, ${sexo}. Objetivo: ${objetivo}.
-Actividad: ${actividad}. Presupuesto: ${presupuesto}. Restricciones: ${restricciones || 'Ninguna'}.
-Calorías sugeridas: ${calorias} kcal. IMC: ${imc}.
-
-Genera un plan nutricional JSON EXACTO (sin texto extra fuera de las llaves):
-
-{
-  "macros": { "calorias": ${calorias || 1800}, "proteina": 0, "carbohidratos": 0, "grasas": 0 },
-  "plan_semanal": {
-    "Lunes": { "desayuno": "", "comida": "", "cena": "", "colacion1": "", "colacion2": "" },
-    "Martes": { "desayuno": "", "comida": "", "cena": "", "colacion1": "", "colacion2": "" },
-    "Miércoles": { "desayuno": "", "comida": "", "cena": "", "colacion1": "", "colacion2": "" }
-  },
-  "lista_super": { "proteinas": [], "carbohidratos": [], "frutas_verduras": [], "lacteos": [], "extras": [] },
-  "tips": ["", "", ""],
-  "mensaje_whatsapp": "Mensaje cálido para el paciente..."
+function sharesForObjective(objetivo) {
+  // Shares aproximados para que el frontend reciba macros consistentes
+  if (objetivo === "bajar") return { p: 0.30, c: 0.40, f: 0.30 };
+  if (objetivo === "muscular") return { p: 0.35, c: 0.40, f: 0.25 };
+  return { p: 0.30, c: 0.35, f: 0.35 }; // mantener
 }
 
-IMPORTANTE: Solo genera Lunes, Martes y Miércoles para optimizar tiempo. Usa alimentos mexicanos.`;
+function extractJson(text) {
+  const match = text.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error("No se encontró JSON en la respuesta de IA.");
+  return JSON.parse(match[0]);
+}
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-3-5-sonnet-20241022',
-        max_tokens: 1500, // Menos tokens = más rápido
-        temperature: 0,    // 0 es mejor para generar JSON sin errores
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-
-    if (!response.ok) {
-      const errorData = await response.text();
-      return new Response(JSON.stringify({ error: `Anthropic Error: ${response.status}`, details: errorData }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      });
+module.exports = async (req, res) => {
+  try {
+    if (req.method !== "POST") {
+      return res.status(405).json({ error: "Method not allowed" });
     }
 
-    const data = await response.json();
-    const rawText = data.content?.[0]?.text || '';
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: "Falta ANTHROPIC_API_KEY en Vercel." });
+    }
 
-    // Extraer solo el JSON por si Claude agrega texto decorativo
-    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-    let planData = jsonMatch ? JSON.parse(jsonMatch[0]) : { plan: rawText };
+    const payload = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
 
-    return new Response(JSON.stringify(planData), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
+    const {
+      nombre,
+      edad,
+      peso,
+      estatura,
+      sexo,
+      objetivo,
+      actividad,
+      presupuesto,
+      restricciones,
+      calorias,
+      imc
+    } = payload || {};
+
+    if (!nombre || !objetivo || !actividad || !calorias) {
+      return res.status(400).json({ error: "Payload incompleto." });
+    }
+
+    const shares = sharesForObjective(objetivo);
+    const proteina = Math.round((calorias * shares.p) / 4);
+    const carbohidratos = Math.round((calorias * shares.c) / 4);
+    const grasas = Math.round((calorias * shares.f) / 9);
+
+    const anthropic = new Anthropic({ apiKey });
+
+    const system = [
+      "Eres un asistente experto en nutrición para generar planes semanales en español.",
+      "Devuelve ÚNICAMENTE JSON válido (sin markdown, sin backticks, sin texto extra).",
+      "El JSON debe respetar EXACTAMENTE esta forma de llaves y tipos:",
+      "{",
+      "\"macros\": {\"calorias\": number, \"proteina\": number, \"carbohidratos\": number, \"grasas\": number},",
+      "\"plan_semanal\": {",
+      "\"Lunes\": {\"desayuno\": string, \"comida\": string, \"cena\": string, \"colacion1\": string, \"colacion2\": string},",
+      "\"Martes\": {\"desayuno\": string, \"comida\": string, \"cena\": string, \"colacion1\": string, \"colacion2\": string},",
+      "\"Miércoles\": {\"desayuno\": string, \"comida\": string, \"cena\": string, \"colacion1\": string, \"colacion2\": string},",
+      "\"Jueves\": {\"desayuno\": string, \"comida\": string, \"cena\": string, \"colacion1\": string, \"colacion2\": string},",
+      "\"Viernes\": {\"desayuno\": string, \"comida\": string, \"cena\": string, \"colacion1\": string, \"colacion2\": string}",
+      "},",
+      "\"lista_super\": {\"proteinas\": string[], \"carbohidratos\": string[], \"frutas_verduras\": string[], \"lacteos\": string[], \"extras\": string[]},",
+      "\"tips\": string[],",
+      "\"mensaje_whatsapp\": string",
+      "}"
+    ].join("\n");
+
+    const userPrompt = `
+Genera un plan semanal (5 días: Lunes a Viernes) con 5 comidas por día (desayuno, comida, cena, colación1, colación2).
+Objetivo: ${objetivo}
+Actividad: ${actividad}
+Presupuesto semanal: ${presupuesto}
+Restricciones/intolerancias: ${restricciones || "ninguna"}
+Datos del paciente: ${nombre}, ${edad} años, ${peso}kg, ${estatura}cm, sexo: ${sexo}, IMC: ${imc}
+Calorías objetivo: ${calorias} kcal/día
+
+Macros YA calculados:
+- proteina: ${proteina} g
+- carbohidratos: ${carbohidratos} g
+- grasas: ${grasas} g
+
+Instrucciones:
+- Mantén las porciones sugeridas en el texto (ej: "1 porción", "1 taza", "1 pieza").
+- Evita alimentos que contradigan las restricciones.
+- Lista del súper: 5 categorías, con 6-10 ítems por categoría.
+- tips: 6 tips cortos y accionables, alineados al objetivo.
+- mensaje_whatsapp: amable, listo para copiar, incluyendo nombre, calorías, macros aproximados y recordatorio de restricciones.
+
+Devuelve SOLO el JSON válido con los campos solicitados.
+    `.trim();
+
+    const resp = await anthropic.messages.create({
+      model: "claude-3-5-sonnet-latest",
+      max_tokens: 1700,
+      temperature: 0.7,
+      system,
+      messages: [{ role: "user", content: userPrompt }]
     });
 
-  } catch (error) {
-    console.error('Error en /api/generate:', error);
-    return new Response(JSON.stringify({ error: 'Error al generar el plan', message: error.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    const text = resp?.content?.[0]?.text;
+    if (!text) return res.status(500).json({ error: "Respuesta vacía de la IA." });
+
+    const data = extractJson(text);
+    res.status(200).json(data);
+  } catch (err) {
+    res.status(500).json({ error: err?.message || "Error al generar con IA" });
   }
-}
+};
