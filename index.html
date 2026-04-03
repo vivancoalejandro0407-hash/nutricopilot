@@ -36,7 +36,7 @@
     min-height: 100vh;
     overflow-x: hidden;
   }
-
+ 
   /* ══ LOGIN EN CARD ══ */
   #login-panel { display: block; }
   #form-panel { display: none; }
@@ -75,7 +75,7 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 22px; margin-bottom: 16px;
   }
-
+ 
   /* ══ DEMO BANNER ══ */
   #demo-banner {
     background: linear-gradient(90deg, #5f8562, #7a9e7e);
@@ -89,9 +89,9 @@
   }
   #demo-banner.show { display: block; }
   #demo-banner span { opacity: 0.85; font-weight: 400; }
-
-
-
+ 
+ 
+ 
   /* ── HEADER ── */
   header {
     background: var(--warm-white);
@@ -129,7 +129,7 @@
     cursor: pointer; transition: background 0.2s, color 0.2s;
   }
   .btn-logout:hover { background: #fecaca; color: #b91c1c; }
-
+ 
   /* ── HERO ── */
   .hero {
     background: linear-gradient(160deg, var(--sage-pale) 0%, var(--cream) 60%);
@@ -183,7 +183,7 @@
     font-size: 1.9rem; color: var(--charcoal);
   }
   .hero-stat span { font-size: 0.8rem; color: var(--mid-gray); }
-
+ 
   /* ── DEMO NOTICE ── */
   .demo-notice {
     max-width: 1100px; margin: 24px auto 0; padding: 0 24px;
@@ -196,7 +196,7 @@
   .demo-notice-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 1px; }
   .demo-notice-text { font-size: 0.87rem; color: #78350f; line-height: 1.55; }
   .demo-notice-text strong { color: #92400e; }
-
+ 
   /* ── MAIN LAYOUT ── */
   .main-wrap {
     max-width: 1100px; margin: 0 auto;
@@ -205,7 +205,7 @@
     gap: 32px; align-items: start;
   }
   @media(max-width:860px) { .main-wrap { grid-template-columns: 1fr; } }
-
+ 
   /* ── CARD ── */
   .card {
     background: var(--warm-white); border-radius: var(--radius);
@@ -228,7 +228,7 @@
   .card-title { font-size: 1rem; font-weight: 600; }
   .card-sub { font-size: 0.8rem; color: var(--mid-gray); margin-top: 2px; }
   .card-body { padding: 24px 28px; }
-
+ 
   /* ── ICC ── */
   .icc-grid { display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center; }
   .icc-valor {
@@ -269,7 +269,7 @@
   .badge-alto     { background: #fee2e2; color: #b91c1c; }
   .badge-muy-alto { background: #ede9fe; color: #6d28d9; }
   @media(max-width:500px) { .icc-grid { grid-template-columns: 1fr; } .icc-valor { min-width: unset; } }
-
+ 
   /* ── FORM ── */
   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .form-group { display: flex; flex-direction: column; gap: 6px; }
@@ -293,7 +293,7 @@
     background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px;
   }
   textarea { resize: vertical; min-height: 72px; }
-
+ 
   /* ── BUTTONS ── */
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 8px;
@@ -313,7 +313,7 @@
     font-size: 0.82rem; padding: 8px 16px; width: auto;
   }
   .btn-ghost:hover { background: var(--sage-pale); color: var(--sage); }
-
+ 
   /* ── RESULTS ── */
   #results { display: none; }
   #results.visible {
@@ -324,7 +324,7 @@
     from { opacity: 0; transform: translateY(20px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-
+ 
   /* Result demo label */
   .result-demo-tag {
     display: inline-flex; align-items: center; gap: 6px;
@@ -333,14 +333,14 @@
     letter-spacing: 0.07em; padding: 4px 12px; border-radius: 20px;
     margin-bottom: 4px;
   }
-
+ 
   .result-section-title {
     font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
     letter-spacing: 0.08em; color: var(--mid-gray);
     margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
   }
   .result-section-title::after { content: ''; flex: 1; height: 1px; background: var(--light-gray); }
-
+ 
   /* Meal plan */
   .meal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   @media(max-width:600px) { .meal-grid { grid-template-columns: 1fr; } }
@@ -355,7 +355,7 @@
   }
   .meal-card.snack .meal-label { color: var(--clay); }
   .meal-desc { font-size: 0.88rem; line-height: 1.5; color: var(--charcoal); }
-
+ 
   /* Shopping list */
   .shop-cats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   @media(max-width:500px) { .shop-cats { grid-template-columns: 1fr; } }
@@ -370,7 +370,7 @@
     padding: 3px 0; display: flex; align-items: center; gap: 6px;
   }
   .shop-cat li::before { content: '✓'; color: var(--sage); font-weight: 700; font-size: 10px; }
-
+ 
   /* Tips */
   .tips-list { display: flex; flex-direction: column; gap: 10px; }
   .tip-item {
@@ -385,7 +385,7 @@
     flex-shrink: 0; margin-top: 1px;
   }
   .tip-text { font-size: 0.86rem; line-height: 1.5; }
-
+ 
   /* WhatsApp message */
   .wa-box {
     background: #e7f5e8; border: 1px solid #c5e1c6;
@@ -402,7 +402,7 @@
     letter-spacing: 0.07em; color: #2a7d2e;
     display: flex; align-items: center; gap: 6px;
   }
-
+ 
   /* Macros */
   .macros {
     background: var(--warm-white); border: 1px solid var(--light-gray);
@@ -420,7 +420,7 @@
   .macro-pill span { font-weight: 700; color: var(--sage); }
   .macro-pill.clay-pill { background: var(--clay-light); }
   .macro-pill.clay-pill span { color: var(--clay); }
-
+ 
   /* Toast */
   .toast {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(60px);
@@ -429,13 +429,13 @@
     white-space: nowrap;
   }
   .toast.show { transform: translateX(-50%) translateY(0); }
-
+ 
   .divider { height: 1px; background: var(--light-gray); margin: 4px 0; }
   .mt-12 { margin-top: 12px; }
   .empty-state { text-align: center; padding: 48px 24px; color: var(--mid-gray); }
   .empty-state .big-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.4; }
   .empty-state p { font-size: 0.9rem; line-height: 1.6; }
-
+ 
   /* Loading */
   .loading { display: none; }
   .loading.active { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 16px; }
@@ -445,15 +445,15 @@
     animation: spin 0.7s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-
+ 
   /* Scrollbar */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--light-gray); border-radius: 3px; }
-
+ 
   /* ── LANDING SECTION (REDISEÑO) ── */
   .landing { background: #fff; position: relative; overflow: hidden; }
-
+ 
   /* NAV */
   .landing-nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 300;
@@ -479,7 +479,7 @@
     box-shadow: 0 2px 8px rgba(249,115,22,0.35);
   }
   .btn-nav-cta:hover { background: var(--orange-dark); transform: translateY(-1px); }
-
+ 
   /* HERO */
   .hero-wrap {
     position: relative; min-height: 92vh;
@@ -535,7 +535,7 @@
   .hero-stat-new span { font-size: 0.78rem; color: var(--mid-gray); }
   .hero-stat-divider { width: 1px; height: 40px; background: var(--light-gray); }
   @media(max-width:600px) { .hero-stat-divider { display: none; } .hero-stat-new { padding: 8px 12px; } .hero-stats-new { flex-wrap: wrap; } }
-
+ 
   /* BENEFICIOS */
   .beneficios-wrap { background: var(--cream); padding: 80px 24px; text-align: center; }
   .beneficios-label {
@@ -567,7 +567,7 @@
   }
   .beneficio-titulo { font-weight: 700; font-size: 1rem; color: var(--charcoal); margin-bottom: 8px; }
   .beneficio-desc { font-size: 0.85rem; color: var(--mid-gray); line-height: 1.6; }
-
+ 
   /* TESTIMONIOS */
   .testimonios-wrap { background: white; padding: 80px 24px; text-align: center; }
   .testimonios-label {
@@ -601,7 +601,7 @@
   }
   .testimonio-nombre { font-weight: 700; font-size: 0.88rem; color: var(--charcoal); }
   .testimonio-cargo { font-size: 0.78rem; color: var(--mid-gray); margin-top: 2px; }
-
+ 
   /* CTA FINAL */
   .cta-final-wrap {
     background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
@@ -621,7 +621,7 @@
   }
   .btn-cta-final:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(249,115,22,0.5); }
   .btn-landing, .btn-landing-note, .landing-benefits { display: none; }
-
+ 
     /* ── PRICING SECTION ── */
   .pricing {
     background: var(--cream); padding: 80px 24px;
@@ -687,17 +687,17 @@
 </style>
 </head>
 <body>
-
+ 
 <!-- ══ DEMO BANNER ══ -->
 <div id="demo-banner">
   💰 Más pacientes, menos tiempo &nbsp;·&nbsp; <span>Activa tu acceso hoy</span>
 </div>
-
+ 
 <div id="app-wrapper">
-
+ 
 <!-- ══ LANDING ══ -->
 <section class="landing" id="landing-top">
-
+ 
   <!-- NAV BAR -->
   <nav class="landing-nav">
     <div class="landing-nav-inner">
@@ -710,7 +710,7 @@
       </a>
     </div>
   </nav>
-
+ 
   <!-- HERO -->
   <div class="hero-wrap">
     <div class="hero-bg-img"></div>
@@ -743,7 +743,7 @@
       </div>
     </div>
   </div>
-
+ 
   <!-- BENEFICIOS -->
   <div class="beneficios-wrap" id="beneficios">
     <div class="beneficios-label">Por qué Nutripilot</div>
@@ -771,7 +771,7 @@
       </div>
     </div>
   </div>
-
+ 
   <!-- TESTIMONIOS -->
   <div class="testimonios-wrap">
     <div class="testimonios-label">Testimonios</div>
@@ -812,7 +812,7 @@
       </div>
     </div>
   </div>
-
+ 
   <!-- CTA FINAL -->
   <div class="cta-final-wrap">
     <div class="cta-final-card">
@@ -823,9 +823,9 @@
       </a>
     </div>
   </div>
-
+ 
 </section>
-
+ 
 <!-- ══ PRICING ══ -->
 <section class="pricing">
   <div class="pricing-eyebrow">Precio de lanzamiento</div>
@@ -850,7 +850,7 @@
     <span>✨ Sin cargos ocultos</span>
   </div>
 </section>
-
+ 
 <!-- HEADER -->
 <header id="app-herramienta">
   <div class="header-inner">
@@ -864,7 +864,7 @@
     </div>
   </div>
 </header>
-
+ 
 <!-- HERO -->
 <div class="hero">
   <div class="hero-eyebrow">Generador de planes nutricionales</div>
@@ -876,17 +876,17 @@
     <div class="hero-stat"><strong>1 clic</strong><span>listo para WhatsApp</span></div>
   </div>
 </div>
-
+ 
 <!-- DEMO NOTICE (oculto) -->
 <div class="demo-notice" id="demo-notice" style="display:none;"></div>
-
+ 
 <!-- MAIN -->
 <div class="main-wrap">
-
+ 
   <!-- FORM COLUMN -->
   <div>
     <div class="card">
-
+ 
       <!-- LOGIN PANEL -->
       <div id="login-panel">
         <div class="card-header">
@@ -910,7 +910,7 @@
           <div class="login-hint">Demo: usuario <strong>nutriologa</strong> · contraseña <strong>nutripilot2024</strong></div>
         </div>
       </div>
-
+ 
       <!-- FORM PANEL (oculto hasta login) -->
       <div id="form-panel">
       <div class="card-header">
@@ -996,7 +996,7 @@
           <div class="spinner"></div>
           <span style="font-size:0.88rem;color:var(--mid-gray)">Generando plan personalizado con IA...</span>
         </div>
-
+ 
         <!-- Acciones post-generación (solo admin) -->
         <div id="acciones-admin" style="display:none; margin-top:16px; flex-direction:column; gap:10px;">
           <button class="btn" style="background:linear-gradient(135deg,#e74c3c,#c0392b);color:white;" onclick="generarPDF()">
@@ -1010,7 +1010,7 @@
       </div><!-- /form-panel -->
     </div>
   </div>
-
+ 
   <!-- RESULTS COLUMN -->
   <div id="results-col" style="display:none;">
     <!-- Empty state -->
@@ -1021,12 +1021,12 @@
         Llena el formulario y haz clic en<br>"Generar Plan Nutricional"</p>
       </div>
     </div>
-
+ 
     <!-- Results -->
     <div id="results">
-
-
-
+ 
+ 
+ 
       <!-- ICC -->
       <div class="card" id="card-icc" style="display:none;">
         <div class="card-header">
@@ -1040,7 +1040,7 @@
           <div id="icc-resultado"></div>
         </div>
       </div>
-
+ 
       <!-- Macros -->
       <div class="card">
         <div class="card-header">
@@ -1057,7 +1057,22 @@
           </div>
         </div>
       </div>
-
+ 
+      <!-- Composición Corporal -->
+      <div class="card" id="card-composicion" style="display:none;">
+        <div class="card-header">
+          <div class="card-icon green">🏋️</div>
+          <div>
+            <div class="card-title">Composición corporal</div>
+            <div class="card-sub">Valores estimados para seguimiento</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="composicion-resultado"></div>
+          <p style="margin-top:12px;font-size:0.75rem;color:var(--mid-gray)">Valores estimados para seguimiento de composición corporal</p>
+        </div>
+      </div>
+ 
       <!-- Plan semanal -->
       <div class="card">
         <div class="card-header">
@@ -1071,7 +1086,7 @@
           <div id="plan-comidas"></div>
         </div>
       </div>
-
+ 
       <!-- Shopping -->
       <div class="card">
         <div class="card-header">
@@ -1085,7 +1100,7 @@
           <div id="lista-super"></div>
         </div>
       </div>
-
+ 
       <!-- Tips -->
       <div class="card">
         <div class="card-header">
@@ -1099,7 +1114,7 @@
           <div id="tips-list" class="tips-list"></div>
         </div>
       </div>
-
+ 
       <!-- WhatsApp -->
       <div class="card">
         <div class="card-header">
@@ -1120,30 +1135,30 @@
           <div class="wa-box" id="wa-msg"></div>
         </div>
       </div>
-
+ 
     </div>
   </div>
 </div>
-
+ 
 </div><!-- /app-wrapper -->
-
+ 
 <div class="toast" id="toast"></div>
-
+ 
 <script>
 // ══ AUTH ══
 const USUARIOS = {
   "nutriologa": "nutripilot2024",   // demo
   "admin": "Admin2024!"               // acceso real — cambia esta clave antes de publicar
 };
-
+ 
 function intentarLogin() {
   const user = document.getElementById('login-user').value.trim().toLowerCase();
   const pass = document.getElementById('login-pass').value;
   const err = document.getElementById('login-error');
   const userKey = user.includes('@') ? user.split('@')[0] : user;
-
+ 
   const USUARIOS_DEMO = ['nutriologa'];
-
+ 
   if (USUARIOS[userKey] && USUARIOS[userKey] === pass) {
     err.classList.remove('show');
     window._esAdmin = !USUARIOS_DEMO.includes(userKey);
@@ -1165,7 +1180,7 @@ function intentarLogin() {
     document.getElementById('login-pass').focus();
   }
 }
-
+ 
 function cerrarSesion() {
   document.getElementById('login-panel').style.display = 'block';
   document.getElementById('form-panel').style.display = 'none';
@@ -1178,13 +1193,13 @@ function cerrarSesion() {
   document.getElementById('login-pass').value = '';
   document.getElementById('login-error').classList.remove('show');
 }
-
+ 
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Enter' && document.getElementById('login-panel').style.display !== 'none') {
     intentarLogin();
   }
 });
-
+ 
 // ── DATA (legacy demo - no se usa con IA) ──
 const PLANES = {
   bajar: {
@@ -1257,7 +1272,7 @@ const PLANES = {
     }
   }
 };
-
+ 
 const SHOPPING = {
   bajar: {
     bajo: {
@@ -1329,13 +1344,13 @@ const SHOPPING = {
     }
   }
 };
-
+ 
 const TIPS = {
   bajar: ["Reduce el consumo de azúcares simples y bebidas azucaradas — sustitúyelas por agua, agua mineral o té sin azúcar.", "Prioriza proteínas en cada comida: te ayudan a mantenerte satisfecha por más tiempo.", "Come despacio y sin distracciones; tu cerebro tarda 20 minutos en recibir la señal de saciedad.", "Prefiere métodos de cocción como vapor, horno o plancha en lugar de frituras.", "Duerme 7-8 horas; la falta de sueño aumenta el apetito y dificulta bajar de peso.", "Muévete aunque sea 30 minutos diarios — caminar rápido cuenta y marca la diferencia."],
   muscular: ["Asegúrate de consumir proteína en cada tiempo de comida para apoyar la síntesis muscular.", "No saltes el desayuno — tu cuerpo necesita combustible para entrenar y recuperarse.", "Hidrátate bien: el músculo es 75% agua y la deshidratación reduce el rendimiento.", "Come dentro de los 45 minutos después de entrenar para aprovechar la ventana anabólica.", "No temas a los carbohidratos — son el combustible principal de tus músculos.", "El descanso es parte del entrenamiento; sin sueño reparador el músculo no crece."],
   mantener: ["Mantén un horario de comidas regular — la consistencia es clave para el metabolismo.", "Escucha las señales de hambre y saciedad de tu cuerpo en lugar de comer por horario.", "Incluye variedad en tu dieta para asegurar todos los micronutrientes que necesitas.", "Prefiere alimentos mínimamente procesados y cocina en casa cuando sea posible.", "Hidrátate con 2 litros de agua al día como mínimo — el agua mejora todo.", "Disfruta ocasionalmente tus comidas favoritas sin culpa; el equilibrio es salud."]
 };
-
+ 
 // ── LOGIC ──
 function calcIMC(peso, estatura) {
   const h = estatura / 100;
@@ -1357,7 +1372,7 @@ function getRandom(arr, n) {
   const shuffled = [...arr].sort(() => 0.5 - Math.random());
   return shuffled.slice(0, n);
 }
-
+ 
 function validar() {
   const nombre = document.getElementById('nombre').value.trim();
   const edad = document.getElementById('edad').value;
@@ -1369,13 +1384,13 @@ function validar() {
   if (!estatura || estatura < 100) { showToast('Ingresa una estatura válida'); return false; }
   return true;
 }
-
+ 
 function mostrarICC(iccData) {
   if (!iccData || !iccData.valor) return;
-
+ 
   document.getElementById('icc-label').textContent =
     `ICC: ${iccData.valor} · ${iccData.nivel}`;
-
+ 
   document.getElementById('icc-resultado').innerHTML = `
     <div class="icc-grid">
       <div class="icc-valor">
@@ -1394,13 +1409,13 @@ function mostrarICC(iccData) {
       </div>
     </div>
   `;
-
+ 
   document.getElementById('card-icc').style.display = 'block';
 }
-
+ 
 async function generarPlan() {
   if (!validar()) return;
-
+ 
   const nombre    = document.getElementById('nombre').value.trim();
   const edad      = parseInt(document.getElementById('edad').value);
   const peso      = parseFloat(document.getElementById('peso').value);
@@ -1410,34 +1425,34 @@ async function generarPlan() {
   const actividad = document.getElementById('actividad').value;
   const presupuesto  = document.getElementById('presupuesto').value;
   const restricciones = document.getElementById('restricciones').value.trim();
-
+ 
   const cintura    = parseFloat(document.getElementById('cintura').value) || 0;
   const cadera     = parseFloat(document.getElementById('cadera').value) || 0;
-
+ 
   // Calcular localmente para pasarlos al prompt
   const imc      = calcIMC(peso, estatura);
   const tmb      = calcTMB(peso, estatura, edad, sexo);
   const calorias = calcCalorias(tmb, actividad, objetivo);
-
+ 
   document.getElementById('loading').classList.add('active');
   document.getElementById('results').classList.remove('visible');
   document.getElementById('empty-state').style.display = 'none';
-
+ 
   try {
     const res = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nombre, edad, peso, estatura, sexo, objetivo, actividad, presupuesto, restricciones, calorias, imc })
     });
-
+ 
     const data = await res.json();
     if (data.error) throw new Error(data.error);
-
+ 
     document.getElementById('loading').classList.remove('active');
-
+ 
     // ── ICC ──
     mostrarICC(data.icc);
-
+ 
     // ── MACROS ──
     const m = data.macros;
     const objLabels = { bajar: 'Bajar grasa', muscular: 'Masa muscular', mantener: 'Mantener peso' };
@@ -1449,7 +1464,21 @@ async function generarPlan() {
       <div class="macro-pill clay-pill"><span>${m.carbohidratos}g</span> carbs</div>
       <div class="macro-pill"><span>${m.grasas}g</span> grasas</div>
     `;
-
+ 
+    // ── COMPOSICIÓN CORPORAL ──
+    const cc = data.composicionCorporal;
+    if (cc && (cc.masaMuscularEsqueletica || cc.masaMuscularKg || cc.grasaVisceral || cc.aguaPorcentaje)) {
+      document.getElementById('composicion-resultado').innerHTML = `
+        <div class="macro-row">
+          ${cc?.masaMuscularEsqueletica ? `<div class="macro-pill"><span>${cc.masaMuscularEsqueletica}%</span> Masa muscular</div>` : ''}
+          ${cc?.masaMuscularKg ? `<div class="macro-pill"><span>${cc.masaMuscularKg}kg</span> Músculo</div>` : ''}
+          ${cc?.grasaVisceral ? `<div class="macro-pill clay-pill"><span>${cc.grasaVisceral}</span> Grasa visceral</div>` : ''}
+          ${cc?.aguaPorcentaje ? `<div class="macro-pill"><span>${cc.aguaPorcentaje}%</span> Agua corporal</div>` : ''}
+        </div>
+      `;
+      document.getElementById('card-composicion').style.display = 'block';
+    }
+ 
     // ── PLAN SEMANAL ──
     const dias = ['Lunes','Martes','Miércoles','Jueves','Viernes'];
     let planHTML = '';
@@ -1467,7 +1496,7 @@ async function generarPlan() {
       if (i < dias.length - 1) planHTML += '<div class="divider" style="margin:16px 0"></div>';
     });
     document.getElementById('plan-comidas').innerHTML = planHTML;
-
+ 
     // ── LISTA DEL SÚPER ──
     const s = data.lista_super;
     const catIcons = { proteinas:'🥩', carbohidratos:'🌾', frutas_verduras:'🥦', lacteos:'🥛', extras:'🫙' };
@@ -1482,20 +1511,20 @@ async function generarPlan() {
     shopHTML += '</div>';
     if (restricciones) shopHTML += `<p style="margin-top:12px;font-size:0.8rem;color:var(--mid-gray)">⚠️ Restricciones consideradas: <strong>${restricciones}</strong></p>`;
     document.getElementById('lista-super').innerHTML = shopHTML;
-
+ 
     // ── TIPS ──
     document.getElementById('tips-list').innerHTML = data.tips.map((t, i) =>
       `<div class="tip-item"><div class="tip-num">${i+1}</div><div class="tip-text">${t}</div></div>`
     ).join('');
-
+ 
     // ── WHATSAPP ──
     document.getElementById('wa-msg').textContent = data.mensaje_whatsapp;
     window._waMsgText = data.mensaje_whatsapp;
-
+ 
     document.getElementById('empty-state').style.display = 'none';
     document.getElementById('results').classList.add('visible');
     document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
-
+ 
     // Mostrar acciones admin si aplica
     if (window._esAdmin) {
       const acc = document.getElementById('acciones-admin');
@@ -1503,14 +1532,14 @@ async function generarPlan() {
       const btnWa = document.getElementById('btn-wa-directo');
       if (btnWa) btnWa.style.display = 'inline-flex';
     }
-
+ 
   } catch (err) {
     document.getElementById('loading').classList.remove('active');
     document.getElementById('empty-state').style.display = 'block';
     showToast('❌ ' + (err.message || 'Error al generar el plan. Intenta de nuevo.'));
   }
 }
-
+ 
 function generarPDF() {
   const resultados = document.getElementById('results');
   if (!resultados || !resultados.classList.contains('visible')) {
@@ -1564,7 +1593,7 @@ function generarPDF() {
   `);
   ventana.document.close();
 }
-
+ 
 function enviarWhatsApp() {
   if (!window._waMsgText) { showToast('Primero genera un plan'); return; }
   let numero = document.getElementById('whatsapp-paciente').value.trim().replace(/\D/g, '');
@@ -1574,12 +1603,12 @@ function enviarWhatsApp() {
   const texto = encodeURIComponent(window._waMsgText);
   window.open(`https://wa.me/${numero}?text=${texto}`, '_blank');
 }
-
+ 
 function copiarMensaje() {
   if (!window._waMsgText) { showToast('Primero genera un plan'); return; }
   navigator.clipboard.writeText(window._waMsgText).then(() => showToast('✅ Mensaje copiado'));
 }
-
+ 
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
