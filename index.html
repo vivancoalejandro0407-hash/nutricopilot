@@ -3,28 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NutriCopilot — Planes Nutricionales en 1 Minuto</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>Nutripilot — Planes Nutricionales en 1 Minuto</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --sage: #7a9e7e;
-    --sage-light: #a8c5ac;
-    --sage-pale: #edf4ee;
-    --cream: #faf8f3;
+    --green: #22C55E;
+    --green-light: #86EFAC;
+    --green-pale: #F0FDF4;
+    --orange: #F97316;
+    --orange-light: #FED7AA;
+    --cream: #FAFAFA;
     --warm-white: #ffffff;
-    --clay: #c9856a;
-    --clay-light: #f0d5cb;
-    --charcoal: #2b2d2e;
-    --mid-gray: #6b7280;
-    --light-gray: #e8eceb;
-    --card-shadow: 0 4px 24px rgba(43,45,46,0.08);
-    --card-shadow-hover: 0 8px 40px rgba(43,45,46,0.14);
-    --radius: 18px;
-    --radius-sm: 10px;
+    --charcoal: #111827;
+    --mid-gray: #6B7280;
+    --light-gray: #E5E7EB;
+    --card-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    --card-shadow-hover: 0 12px 40px rgba(0,0,0,0.13);
+    --radius: 20px;
+    --radius-sm: 12px;
+    /* legacy aliases */
+    --sage: #22C55E;
+    --sage-light: #86EFAC;
+    --sage-pale: #F0FDF4;
+    --clay: #F97316;
+    --clay-light: #FED7AA;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     background: var(--cream);
     color: var(--charcoal);
     min-height: 100vh;
@@ -35,7 +41,7 @@
   #login-panel { display: block; }
   #form-panel { display: none; }
   .login-card-title {
-    font-family: 'DM Serif Display', serif;
+    font-family: 'Fraunces', serif;
     font-size: 1.15rem; color: var(--charcoal); margin-bottom: 4px;
   }
   .login-card-sub { font-size: 0.82rem; color: var(--mid-gray); margin-bottom: 22px; }
@@ -49,7 +55,7 @@
   .btn-login {
     width: 100%; padding: 13px;
     background: linear-gradient(135deg, var(--sage), #5f8562);
-    color: white; font-family: 'DM Sans', sans-serif;
+    color: white; font-family: 'Plus Jakarta Sans', sans-serif;
     font-weight: 700; font-size: 0.95rem;
     border: none; border-radius: var(--radius-sm); cursor: pointer;
     box-shadow: 0 4px 16px rgba(122,158,126,0.4);
@@ -105,7 +111,7 @@
     display: flex; align-items: center; justify-content: center; font-size: 18px;
   }
   .logo-text {
-    font-family: 'DM Serif Display', serif;
+    font-family: 'Fraunces', serif;
     font-size: 1.3rem; color: var(--charcoal); letter-spacing: -0.02em;
   }
   .logo-text span { color: var(--sage); }
@@ -119,7 +125,7 @@
   .btn-logout {
     background: var(--light-gray); color: var(--mid-gray);
     border: none; border-radius: 8px; padding: 6px 14px;
-    font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 600;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.78rem; font-weight: 600;
     cursor: pointer; transition: background 0.2s, color 0.2s;
   }
   .btn-logout:hover { background: #fecaca; color: #b91c1c; }
@@ -156,7 +162,7 @@
   .hero-eyebrow::before { content: '●'; font-size: 8px; animation: pulse 2s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
   .hero h1 {
-    font-family: 'DM Serif Display', serif;
+    font-family: 'Fraunces', serif;
     font-size: clamp(2rem, 5vw, 3.2rem);
     line-height: 1.15; color: var(--charcoal);
     letter-spacing: -0.03em; margin-bottom: 18px;
@@ -173,7 +179,7 @@
   }
   .hero-stat { text-align: center; }
   .hero-stat strong {
-    display: block; font-family: 'DM Serif Display', serif;
+    display: block; font-family: 'Fraunces', serif;
     font-size: 1.9rem; color: var(--charcoal);
   }
   .hero-stat span { font-size: 0.8rem; color: var(--mid-gray); }
@@ -231,7 +237,7 @@
     padding: 18px 24px; min-width: 110px;
   }
   .icc-numero {
-    font-family: 'DM Serif Display', serif;
+    font-family: 'Fraunces', serif;
     font-size: 2.4rem; line-height: 1;
     letter-spacing: -0.03em;
   }
@@ -275,7 +281,7 @@
   input, select, textarea {
     background: var(--sage-pale); border: 1.5px solid transparent;
     border-radius: var(--radius-sm); padding: 11px 14px;
-    font-family: 'DM Sans', sans-serif; font-size: 0.92rem; color: var(--charcoal);
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.92rem; color: var(--charcoal);
     outline: none; transition: border-color 0.2s, background 0.2s; width: 100%;
   }
   input:focus, select:focus, textarea:focus {
@@ -292,7 +298,7 @@
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 8px;
     padding: 13px 24px; border-radius: var(--radius-sm);
-    font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.95rem;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; font-size: 0.95rem;
     border: none; cursor: pointer; transition: all 0.22s; width: 100%;
     letter-spacing: 0.01em;
   }
@@ -445,81 +451,178 @@
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--light-gray); border-radius: 3px; }
 
-  /* ── LANDING SECTION ── */
-  .landing {
-    background: linear-gradient(170deg, #1e2a1f 0%, #2b3d2d 50%, #1e2a1f 100%);
-    padding: 100px 24px 80px; text-align: center;
-    position: relative; overflow: hidden;
-  }
-  .landing::before {
-    content: '';
-    position: absolute; top: -120px; left: 50%; transform: translateX(-50%);
-    width: 600px; height: 600px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(122,158,126,0.18) 0%, transparent 65%);
-    pointer-events: none;
-  }
-  .landing::after {
-    content: '';
-    position: absolute; bottom: -80px; right: -60px;
-    width: 280px; height: 280px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(201,133,106,0.12) 0%, transparent 65%);
-    pointer-events: none;
-  }
-  .landing-eyebrow {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: rgba(122,158,126,0.15); border: 1px solid rgba(122,158,126,0.35);
-    border-radius: 20px; padding: 6px 18px;
-    font-size: 0.78rem; font-weight: 600; color: var(--sage-light);
-    margin-bottom: 28px; letter-spacing: 0.06em; text-transform: uppercase;
-  }
-  .landing-eyebrow::before { content: '●'; font-size: 7px; animation: pulse 2s infinite; }
-  .landing h2 {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(2.1rem, 5.5vw, 3.6rem);
-    line-height: 1.12; color: #ffffff;
-    letter-spacing: -0.03em; margin-bottom: 22px;
-    max-width: 760px; margin-left: auto; margin-right: auto;
-  }
-  .landing h2 em { font-style: italic; color: var(--sage-light); }
-  .landing-sub {
-    font-size: 1.05rem; color: rgba(255,255,255,0.62);
-    max-width: 560px; margin: 0 auto 48px; line-height: 1.7;
-  }
-  .landing-sub strong { color: rgba(255,255,255,0.85); font-weight: 500; }
-  .landing-benefits {
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 16px; max-width: 960px; margin: 0 auto 52px;
-  }
-  @media(max-width:860px) { .landing-benefits { grid-template-columns: 1fr 1fr; } }
-  @media(max-width:500px) { .landing-benefits { grid-template-columns: 1fr; } }
-  .benefit-card {
-    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-    border-radius: var(--radius); padding: 28px 20px 24px; text-align: center;
-    transition: background 0.25s, border-color 0.25s, transform 0.25s;
-  }
-  .benefit-card:hover {
-    background: rgba(122,158,126,0.12); border-color: rgba(122,158,126,0.4);
-    transform: translateY(-3px);
-  }
-  .benefit-icon { font-size: 2rem; margin-bottom: 14px; display: block; }
-  .benefit-title { font-family: 'DM Serif Display', serif; font-size: 1.05rem; color: #fff; margin-bottom: 8px; }
-  .benefit-desc { font-size: 0.82rem; color: rgba(255,255,255,0.5); line-height: 1.55; }
-  .btn-landing {
-    display: inline-flex; align-items: center; gap: 10px;
-    padding: 16px 40px;
-    background: linear-gradient(135deg, var(--sage), #5f8562);
-    color: white; font-family: 'DM Sans', sans-serif;
-    font-weight: 700; font-size: 1.05rem;
-    border: none; border-radius: var(--radius-sm);
-    cursor: pointer; text-decoration: none;
-    box-shadow: 0 6px 28px rgba(122,158,126,0.45);
-    transition: transform 0.22s, box-shadow 0.22s;
-    letter-spacing: 0.01em;
-  }
-  .btn-landing:hover { transform: translateY(-3px); box-shadow: 0 10px 36px rgba(122,158,126,0.55); }
-  .btn-landing-note { display: block; margin-top: 14px; font-size: 0.78rem; color: rgba(255,255,255,0.38); letter-spacing: 0.03em; }
+  /* ── LANDING SECTION (REDISEÑO) ── */
+  .landing { background: #fff; position: relative; overflow: hidden; }
 
-  /* ── PRICING SECTION ── */
+  /* NAV */
+  .landing-nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+    background: rgba(255,255,255,0.95); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--light-gray);
+  }
+  .landing-nav-inner {
+    max-width: 1100px; margin: 0 auto; padding: 0 24px; height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo { display: flex; align-items: center; gap: 10px; }
+  .nav-logo-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--green), var(--green-dark));
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+  }
+  .nav-logo-text { font-family: 'DM Serif Display', serif; font-size: 1.3rem; color: var(--charcoal); letter-spacing: -0.02em; }
+  .nav-logo-text span { color: var(--green); }
+  .btn-nav-cta {
+    background: var(--orange); color: white; font-family: 'DM Sans', sans-serif;
+    font-weight: 700; font-size: 0.88rem; padding: 9px 22px; border-radius: 8px;
+    text-decoration: none; transition: background 0.2s, transform 0.2s;
+    box-shadow: 0 2px 8px rgba(249,115,22,0.35);
+  }
+  .btn-nav-cta:hover { background: var(--orange-dark); transform: translateY(-1px); }
+
+  /* HERO */
+  .hero-wrap {
+    position: relative; min-height: 92vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 120px 24px 80px; overflow: hidden;
+  }
+  .hero-bg-img {
+    position: absolute; inset: 0; z-index: 0;
+    background: url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1600&q=80&auto=format&fit=crop') center/cover no-repeat;
+  }
+  .hero-overlay {
+    position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(135deg, rgba(255,255,255,0.97) 0%, rgba(240,253,244,0.93) 50%, rgba(255,255,255,0.90) 100%);
+  }
+  .hero-content { position: relative; z-index: 2; max-width: 720px; text-align: center; }
+  .hero-eyebrow-new {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--green-pale); border: 1px solid var(--green-light);
+    border-radius: 20px; padding: 6px 18px;
+    font-size: 0.78rem; font-weight: 600; color: var(--green-dark);
+    margin-bottom: 28px; letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .hero-eyebrow-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+  .hero-headline {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.2rem, 5.5vw, 3.8rem);
+    line-height: 1.1; color: var(--charcoal); letter-spacing: -0.03em; margin-bottom: 20px;
+  }
+  .hero-headline em { font-style: italic; color: var(--green); }
+  .hero-sub { font-size: 1.1rem; color: var(--mid-gray); max-width: 540px; margin: 0 auto 36px; line-height: 1.7; }
+  .hero-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 48px; }
+  .btn-hero-primary {
+    background: var(--orange); color: white; font-family: 'DM Sans', sans-serif;
+    font-weight: 700; font-size: 1.05rem; padding: 15px 36px;
+    border-radius: var(--radius-sm); text-decoration: none;
+    box-shadow: 0 6px 24px rgba(249,115,22,0.4); transition: transform 0.22s, box-shadow 0.22s;
+  }
+  .btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(249,115,22,0.5); }
+  .btn-hero-secondary {
+    background: transparent; color: var(--charcoal); font-family: 'DM Sans', sans-serif;
+    font-weight: 600; font-size: 1.05rem; padding: 14px 36px;
+    border-radius: var(--radius-sm); text-decoration: none;
+    border: 2px solid var(--light-gray); transition: border-color 0.2s, background 0.2s;
+  }
+  .btn-hero-secondary:hover { border-color: var(--green); background: var(--green-pale); }
+  .hero-stats-new {
+    display: inline-flex; align-items: center;
+    background: white; border: 1px solid var(--light-gray); border-radius: 16px;
+    padding: 18px 32px; box-shadow: var(--card-shadow);
+  }
+  .hero-stat-new { text-align: center; padding: 0 24px; }
+  .hero-stat-new strong { display: block; font-family: 'DM Serif Display', serif; font-size: 1.8rem; color: var(--charcoal); }
+  .hero-stat-new span { font-size: 0.78rem; color: var(--mid-gray); }
+  .hero-stat-divider { width: 1px; height: 40px; background: var(--light-gray); }
+  @media(max-width:600px) { .hero-stat-divider { display: none; } .hero-stat-new { padding: 8px 12px; } .hero-stats-new { flex-wrap: wrap; } }
+
+  /* BENEFICIOS */
+  .beneficios-wrap { background: var(--cream); padding: 80px 24px; text-align: center; }
+  .beneficios-label {
+    display: inline-block; background: var(--green-pale); color: var(--green-dark);
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; padding: 5px 14px; border-radius: 20px; margin-bottom: 16px;
+  }
+  .beneficios-title {
+    font-family: 'DM Serif Display', serif; font-size: clamp(1.7rem, 3.5vw, 2.4rem);
+    color: var(--charcoal); letter-spacing: -0.02em; max-width: 600px;
+    margin: 0 auto 48px; line-height: 1.2;
+  }
+  .beneficios-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 20px; max-width: 1100px; margin: 0 auto;
+  }
+  @media(max-width:860px) { .beneficios-grid { grid-template-columns: 1fr 1fr; } }
+  @media(max-width:500px) { .beneficios-grid { grid-template-columns: 1fr; } }
+  .beneficio-card {
+    background: white; border: 1px solid var(--light-gray); border-radius: var(--radius);
+    padding: 28px 22px 24px; text-align: left; box-shadow: var(--card-shadow);
+    transition: box-shadow 0.25s, transform 0.25s;
+  }
+  .beneficio-card:hover { box-shadow: var(--card-shadow-hover); transform: translateY(-3px); }
+  .beneficio-icon {
+    font-size: 1.6rem; width: 52px; height: 52px; background: var(--green-pale);
+    border-radius: 14px; display: flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+  }
+  .beneficio-titulo { font-weight: 700; font-size: 1rem; color: var(--charcoal); margin-bottom: 8px; }
+  .beneficio-desc { font-size: 0.85rem; color: var(--mid-gray); line-height: 1.6; }
+
+  /* TESTIMONIOS */
+  .testimonios-wrap { background: white; padding: 80px 24px; text-align: center; }
+  .testimonios-label {
+    display: inline-block; background: #fff7ed; color: #c2410c;
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; padding: 5px 14px; border-radius: 20px; margin-bottom: 16px;
+  }
+  .testimonios-title {
+    font-family: 'DM Serif Display', serif; font-size: clamp(1.7rem, 3.5vw, 2.4rem);
+    color: var(--charcoal); letter-spacing: -0.02em; max-width: 560px;
+    margin: 0 auto 48px; line-height: 1.2;
+  }
+  .testimonios-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 24px; max-width: 1000px; margin: 0 auto;
+  }
+  @media(max-width:860px) { .testimonios-grid { grid-template-columns: 1fr; max-width: 480px; } }
+  .testimonio-card {
+    background: var(--cream); border: 1px solid var(--light-gray); border-radius: var(--radius);
+    padding: 28px 24px; text-align: left; box-shadow: var(--card-shadow);
+    transition: box-shadow 0.25s, transform 0.25s;
+  }
+  .testimonio-card:hover { box-shadow: var(--card-shadow-hover); transform: translateY(-2px); }
+  .testimonio-stars { color: #f59e0b; font-size: 0.9rem; margin-bottom: 14px; letter-spacing: 2px; }
+  .testimonio-texto { font-size: 0.92rem; color: var(--charcoal); line-height: 1.7; font-style: italic; margin-bottom: 20px; }
+  .testimonio-autor { display: flex; align-items: center; gap: 12px; }
+  .testimonio-avatar {
+    width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 700; color: white;
+  }
+  .testimonio-nombre { font-weight: 700; font-size: 0.88rem; color: var(--charcoal); }
+  .testimonio-cargo { font-size: 0.78rem; color: var(--mid-gray); margin-top: 2px; }
+
+  /* CTA FINAL */
+  .cta-final-wrap {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    padding: 80px 24px; text-align: center; border-top: 1px solid var(--light-gray);
+  }
+  .cta-final-card { max-width: 560px; margin: 0 auto; }
+  .cta-final-titulo {
+    font-family: 'DM Serif Display', serif; font-size: clamp(1.8rem, 4vw, 2.6rem);
+    color: var(--charcoal); letter-spacing: -0.02em; margin-bottom: 12px;
+  }
+  .cta-final-sub { font-size: 1rem; color: var(--mid-gray); margin-bottom: 32px; }
+  .btn-cta-final {
+    display: inline-block; background: var(--orange); color: white;
+    font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 1.1rem;
+    padding: 17px 44px; border-radius: var(--radius-sm); text-decoration: none;
+    box-shadow: 0 6px 24px rgba(249,115,22,0.4); transition: transform 0.22s, box-shadow 0.22s;
+  }
+  .btn-cta-final:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(249,115,22,0.5); }
+  .btn-landing, .btn-landing-note, .landing-benefits { display: none; }
+
+    /* ── PRICING SECTION ── */
   .pricing {
     background: var(--cream); padding: 80px 24px;
     text-align: center; border-top: 1px solid var(--light-gray);
@@ -531,7 +634,7 @@
     letter-spacing: 0.08em; padding: 5px 14px; border-radius: 20px; margin-bottom: 20px;
   }
   .pricing h2 {
-    font-family: 'DM Serif Display', serif;
+    font-family: 'Fraunces', serif;
     font-size: clamp(1.8rem, 4vw, 2.8rem);
     color: var(--charcoal); letter-spacing: -0.03em; margin-bottom: 10px;
   }
@@ -553,7 +656,7 @@
     letter-spacing: 0.08em; padding: 4px 12px; border-radius: 20px; margin-bottom: 20px;
   }
   .pricing-price {
-    font-family: 'DM Serif Display', serif;
+    font-family: 'Fraunces', serif;
     font-size: 3.2rem; color: var(--charcoal);
     letter-spacing: -0.04em; line-height: 1; margin-bottom: 4px;
   }
@@ -570,7 +673,7 @@
   .btn-pricing {
     display: block; width: 100%; padding: 15px 24px;
     background: linear-gradient(135deg, var(--sage), #5f8562);
-    color: white; font-family: 'DM Sans', sans-serif;
+    color: white; font-family: 'Plus Jakarta Sans', sans-serif;
     font-weight: 700; font-size: 1rem; border: none; border-radius: var(--radius-sm);
     cursor: pointer; box-shadow: 0 4px 20px rgba(122,158,126,0.4);
     transition: transform 0.22s, box-shadow 0.22s; letter-spacing: 0.01em;
@@ -593,42 +696,134 @@
 <div id="app-wrapper">
 
 <!-- ══ LANDING ══ -->
-<section class="landing">
-  <div class="landing-eyebrow">Herramienta para nutriólogas</div>
-  <h2>Haz planes nutricionales<br>en <em>60 segundos</em>…<br>y llena tu consulta</h2>
-  <p class="landing-sub">
-    Deja de perder pacientes por falta de seguimiento.
-    NutriCopilot automatiza tus planes, mensajes y acompañamiento para que tus pacientes
-    <strong>regresen… y te recomienden.</strong>
-  </p>
+<section class="landing" id="landing-top">
 
-  <div class="landing-benefits">
-    <div class="benefit-card">
-      <span class="benefit-icon">⚡</span>
-      <div class="benefit-title">Plan en 60 segundos</div>
-      <div class="benefit-desc">Calorías, macros y menú semanal calculados al instante con los datos del paciente.</div>
+  <!-- NAV BAR -->
+  <nav class="landing-nav">
+    <div class="landing-nav-inner">
+      <div class="nav-logo">
+        <div class="nav-logo-icon">🥗</div>
+        <span class="nav-logo-text">Nutri<span>pilot</span></span>
+      </div>
+      <a href="#app-herramienta" class="btn-nav-cta" onclick="document.getElementById('app-herramienta').scrollIntoView({behavior:'smooth'}); return false;">
+        Probar ahora
+      </a>
     </div>
-    <div class="benefit-card">
-      <span class="benefit-icon">🛒</span>
-      <div class="benefit-title">Lista del súper</div>
-      <div class="benefit-desc">Lista organizada por categorías, lista para compartir o imprimir sin esfuerzo extra.</div>
-    </div>
-    <div class="benefit-card">
-      <span class="benefit-icon">💬</span>
-      <div class="benefit-title">1 clic para WhatsApp</div>
-      <div class="benefit-desc">Texto personalizado y cálido listo para copiar y enviar a tu paciente al momento.</div>
-    </div>
-    <div class="benefit-card">
-      <span class="benefit-icon">📋</span>
-      <div class="benefit-title">100% personalizado</div>
-      <div class="benefit-desc">Plan único por paciente según su objetivo, actividad, presupuesto y restricciones.</div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero-wrap">
+    <div class="hero-bg-img"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow-new">
+        <span class="hero-eyebrow-dot"></span>
+        Herramienta para nutriólogas
+      </div>
+      <h1 class="hero-headline">
+        Haz planes nutricionales<br>en <em>60 segundos</em>…<br>y llena tu consulta
+      </h1>
+      <p class="hero-sub">
+        Automatiza planes, seguimiento y comunicación con tus pacientes sin trabajar más horas.
+      </p>
+      <div class="hero-btns">
+        <a href="#app-herramienta" class="btn-hero-primary" onclick="document.getElementById('app-herramienta').scrollIntoView({behavior:'smooth'}); return false;">
+          Probar ahora
+        </a>
+        <a href="#beneficios" class="btn-hero-secondary" onclick="document.getElementById('beneficios').scrollIntoView({behavior:'smooth'}); return false;">
+          Ver cómo funciona
+        </a>
+      </div>
+      <div class="hero-stats-new">
+        <div class="hero-stat-new"><strong>5×</strong><span>más rápido que manual</span></div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat-new"><strong>100%</strong><span>personalizado</span></div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat-new"><strong>1 clic</strong><span>para WhatsApp</span></div>
+      </div>
     </div>
   </div>
 
-  <a href="#app-herramienta" class="btn-landing" onclick="document.getElementById('app-herramienta').scrollIntoView({behavior:'smooth'}); return false;">
-    🌿 Ir al generador
-  </a>
-  <span class="btn-landing-note">Acceso activo · Sesión iniciada</span>
+  <!-- BENEFICIOS -->
+  <div class="beneficios-wrap" id="beneficios">
+    <div class="beneficios-label">Por qué Nutripilot</div>
+    <h2 class="beneficios-title">Todo lo que necesitas para una consulta más productiva</h2>
+    <div class="beneficios-grid">
+      <div class="beneficio-card">
+        <div class="beneficio-icon">⚡</div>
+        <div class="beneficio-titulo">Plan en 60 segundos</div>
+        <div class="beneficio-desc">Calorías, macros y menú semanal listos automáticamente con los datos del paciente.</div>
+      </div>
+      <div class="beneficio-card">
+        <div class="beneficio-icon">📲</div>
+        <div class="beneficio-titulo">Seguimiento automático</div>
+        <div class="beneficio-desc">Mensajes y acompañamiento sin esfuerzo para que tus pacientes sigan el plan.</div>
+      </div>
+      <div class="beneficio-card">
+        <div class="beneficio-icon">🛒</div>
+        <div class="beneficio-titulo">Lista del súper</div>
+        <div class="beneficio-desc">Todo organizado por categorías, listo para que el paciente compre sin confusiones.</div>
+      </div>
+      <div class="beneficio-card">
+        <div class="beneficio-icon">📈</div>
+        <div class="beneficio-titulo">Más pacientes</div>
+        <div class="beneficio-desc">Mejor experiencia = más recomendaciones y pacientes que regresan.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TESTIMONIOS -->
+  <div class="testimonios-wrap">
+    <div class="testimonios-label">Testimonios</div>
+    <h2 class="testimonios-title">Lo que dicen las nutriólogas que ya lo usan</h2>
+    <div class="testimonios-grid">
+      <div class="testimonio-card">
+        <div class="testimonio-stars">★★★★★</div>
+        <p class="testimonio-texto">"Antes tardaba horas haciendo planes. Ahora en minutos los tengo listos y mis pacientes están más comprometidos."</p>
+        <div class="testimonio-autor">
+          <div class="testimonio-avatar" style="background: linear-gradient(135deg,#22C55E,#16a34a)">ML</div>
+          <div>
+            <div class="testimonio-nombre">Dra. Mariana López</div>
+            <div class="testimonio-cargo">Nutrióloga clínica · CDMX</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonio-card">
+        <div class="testimonio-stars">★★★★★</div>
+        <p class="testimonio-texto">"Desde que uso Nutripilot tengo más seguimiento y más pacientes que regresan. Es un antes y después en mi consulta."</p>
+        <div class="testimonio-autor">
+          <div class="testimonio-avatar" style="background: linear-gradient(135deg,#F97316,#ea6c07)">KR</div>
+          <div>
+            <div class="testimonio-nombre">Nutrióloga Karen Ruiz</div>
+            <div class="testimonio-cargo">Nutrición deportiva · Guadalajara</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonio-card">
+        <div class="testimonio-stars">★★★★★</div>
+        <p class="testimonio-texto">"Me ahorra muchísimo tiempo y me hace ver más profesional con mis pacientes. Lo recomiendo a todas mis colegas."</p>
+        <div class="testimonio-autor">
+          <div class="testimonio-avatar" style="background: linear-gradient(135deg,#3b82f6,#2563eb)">AT</div>
+          <div>
+            <div class="testimonio-nombre">Lic. Andrea Torres</div>
+            <div class="testimonio-cargo">Nutrición familiar · Monterrey</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA FINAL -->
+  <div class="cta-final-wrap">
+    <div class="cta-final-card">
+      <h2 class="cta-final-titulo">Empieza a transformar tu consulta hoy</h2>
+      <p class="cta-final-sub">Tan fácil que puedes usarlo desde el primer día</p>
+      <a href="#app-herramienta" class="btn-cta-final" onclick="document.getElementById('app-herramienta').scrollIntoView({behavior:'smooth'}); return false;">
+        Comenzar ahora
+      </a>
+    </div>
+  </div>
+
 </section>
 
 <!-- ══ PRICING ══ -->
@@ -661,7 +856,7 @@
   <div class="header-inner">
     <a class="logo" href="#">
       <div class="logo-icon">🥗</div>
-      <span class="logo-text">Nutri<span>Copilot</span></span>
+      <span class="logo-text">Nutri<span>pilot</span></span>
     </a>
     <div class="header-right">
       <div class="header-badge">✦ Para nutriólogas</div>
@@ -697,7 +892,7 @@
         <div class="card-header">
           <div class="card-icon green">🔒</div>
           <div>
-            <div class="card-title">Acceso a NutriCopilot</div>
+            <div class="card-title">Acceso a Nutripilot</div>
             <div class="card-sub">Ingresa tus credenciales para continuar</div>
           </div>
         </div>
@@ -711,8 +906,8 @@
             <label>Contraseña</label>
             <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" />
           </div>
-          <button class="btn-login" onclick="intentarLogin()">🌿 Entrar a NutriCopilot</button>
-          <div class="login-hint">Demo: usuario <strong>nutriologa</strong> · contraseña <strong>nutricopilot2024</strong></div>
+          <button class="btn-login" onclick="intentarLogin()">🌿 Entrar a Nutripilot</button>
+          <div class="login-hint">Demo: usuario <strong>nutriologa</strong> · contraseña <strong>nutripilot2024</strong></div>
         </div>
       </div>
 
@@ -937,7 +1132,7 @@
 <script>
 // ══ AUTH ══
 const USUARIOS = {
-  "nutriologa": "nutricopilot2024",   // demo
+  "nutriologa": "nutripilot2024",   // demo
   "admin": "Admin2024!"               // acceso real — cambia esta clave antes de publicar
 };
 
@@ -1175,78 +1370,27 @@ function validar() {
   return true;
 }
 
-function calcICC(cintura, cadera, sexo) {
-  const icc = (cintura / cadera).toFixed(2);
-  const val = parseFloat(icc);
-
-  // Clasificación OMS según sexo
-  let nivel, badge, color;
-  if (sexo === 'mujer') {
-    if (val < 0.80)      { nivel = 'bajo';     badge = 'badge-bajo';     color = 'bajo'; }
-    else if (val < 0.85) { nivel = 'moderado'; badge = 'badge-moderado'; color = 'moderado'; }
-    else if (val < 0.90) { nivel = 'alto';     badge = 'badge-alto';     color = 'alto'; }
-    else                 { nivel = 'muy-alto'; badge = 'badge-muy-alto'; color = 'muy-alto'; }
-  } else {
-    if (val < 0.90)      { nivel = 'bajo';     badge = 'badge-bajo';     color = 'bajo'; }
-    else if (val < 0.95) { nivel = 'moderado'; badge = 'badge-moderado'; color = 'moderado'; }
-    else if (val < 1.00) { nivel = 'alto';     badge = 'badge-alto';     color = 'alto'; }
-    else                 { nivel = 'muy-alto'; badge = 'badge-muy-alto'; color = 'muy-alto'; }
-  }
-
-  const nivelLabel = { bajo: 'Riesgo bajo', moderado: 'Riesgo moderado', alto: 'Riesgo alto', 'muy-alto': 'Riesgo muy alto' };
-
-  const riesgos = {
-    bajo: [
-      { tipo: 'bajo', titulo: 'Riesgo metabólico', desc: 'Distribución de grasa favorable. Bajo riesgo de síndrome metabólico y diabetes tipo 2.' },
-      { tipo: 'bajo', titulo: 'Riesgo cardiovascular', desc: 'Perfil lipídico y presión arterial generalmente dentro de parámetros saludables.' },
-      { tipo: 'bajo', titulo: 'Riesgo clínico general', desc: 'Sin señales de alerta por distribución de grasa abdominal en este momento.' }
-    ],
-    moderado: [
-      { tipo: 'moderado', titulo: 'Riesgo metabólico moderado', desc: 'Posible acumulación incipiente de grasa visceral. Vigilar glucosa en ayuno y triglicéridos.' },
-      { tipo: 'moderado', titulo: 'Riesgo cardiovascular moderado', desc: 'Se recomienda revisión de perfil lipídico y presión arterial periódicamente.' },
-      { tipo: 'moderado', titulo: 'Acción recomendada', desc: 'Ajuste en alimentación, incrementar actividad física aeróbica y reducir estrés.' }
-    ],
-    alto: [
-      { tipo: 'alto', titulo: 'Riesgo metabólico alto', desc: 'Alta probabilidad de resistencia a la insulina, dislipidemia e hígado graso.' },
-      { tipo: 'alto', titulo: 'Riesgo cardiovascular alto', desc: 'Mayor riesgo de hipertensión, enfermedad coronaria y accidente cerebrovascular.' },
-      { tipo: 'alto', titulo: 'Riesgo clínico', desc: 'Se sugiere perfil metabólico completo: glucosa, insulina, HOMA-IR, perfil lipídico y función hepática.' }
-    ],
-    'muy-alto': [
-      { tipo: 'muy-alto', titulo: '⚠️ Riesgo metabólico muy alto', desc: 'Fuerte indicador de obesidad central. Riesgo elevado de diabetes tipo 2, síndrome metabólico y esteatosis hepática.' },
-      { tipo: 'muy-alto', titulo: '⚠️ Riesgo cardiovascular muy alto', desc: 'Riesgo significativo de infarto al miocardio, hipertensión severa y enfermedad renal crónica.' },
-      { tipo: 'muy-alto', titulo: '⚠️ Intervención urgente recomendada', desc: 'Derivar a médico para evaluación integral. Iniciar plan nutricional terapéutico y actividad física supervisada.' }
-    ]
-  };
-
-  return { icc, nivel, badge, color, nivelLabel: nivelLabel[nivel], riesgos: riesgos[nivel] };
-}
-
-function mostrarICC(cintura, cadera, sexo) {
-  if (!cintura || !cadera || cintura < 40 || cadera < 40) return;
-  const r = calcICC(cintura, cadera, sexo);
+function mostrarICC(iccData) {
+  if (!iccData || !iccData.valor) return;
 
   document.getElementById('icc-label').textContent =
-    `Cintura: ${cintura} cm · Cadera: ${cadera} cm · ICC: ${r.icc}`;
-
-  const colorNum = { bajo: '#22c55e', moderado: '#f59e0b', alto: '#ef4444', 'muy-alto': '#7c3aed' };
+    `ICC: ${iccData.valor} · ${iccData.nivel}`;
 
   document.getElementById('icc-resultado').innerHTML = `
     <div class="icc-grid">
       <div class="icc-valor">
-        <div class="icc-numero" style="color:${colorNum[r.color]}">${r.icc}</div>
+        <div class="icc-numero" style="color:${iccData.color}">${iccData.valor}</div>
         <div class="icc-etiqueta">ICC</div>
-        <div class="icc-badge ${r.badge}">${r.nivelLabel}</div>
+        <div class="icc-badge">${iccData.nivel}</div>
       </div>
       <div class="icc-riesgos">
-        ${r.riesgos.map(item => `
-          <div class="icc-riesgo-item ${item.tipo}">
-            <div class="icc-dot"></div>
-            <div>
-              <div class="icc-riesgo-titulo">${item.titulo}</div>
-              <div class="icc-riesgo-desc">${item.desc}</div>
-            </div>
+        <div class="icc-riesgo-item">
+          <div class="icc-dot" style="background:${iccData.color}"></div>
+          <div>
+            <div class="icc-riesgo-titulo">${iccData.nivel}</div>
+            <div class="icc-riesgo-desc">${iccData.mensaje}</div>
           </div>
-        `).join('')}
+        </div>
       </div>
     </div>
   `;
@@ -1292,7 +1436,7 @@ async function generarPlan() {
     document.getElementById('loading').classList.remove('active');
 
     // ── ICC ──
-    mostrarICC(cintura, cadera, sexo);
+    mostrarICC(data.icc);
 
     // ── MACROS ──
     const m = data.macros;
@@ -1382,8 +1526,8 @@ function generarPDF() {
     <title>Plan Nutricional — ${nombre}</title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-      body { font-family: 'DM Sans', sans-serif; color: #2b2d2e; padding: 32px; max-width: 860px; margin: 0 auto; }
-      h1 { font-family: 'DM Serif Display', serif; font-size: 1.8rem; margin-bottom: 4px; }
+      body { font-family: 'Plus Jakarta Sans', sans-serif; color: #2b2d2e; padding: 32px; max-width: 860px; margin: 0 auto; }
+      h1 { font-family: 'Fraunces', serif; font-size: 1.8rem; margin-bottom: 4px; }
       .subtitle { color: #6b7280; font-size: 0.9rem; margin-bottom: 32px; }
       .card { border: 1px solid #e8eceb; border-radius: 12px; padding: 20px; margin-bottom: 20px; break-inside: avoid; }
       .card-title { font-weight: 700; font-size: 1rem; margin-bottom: 12px; }
@@ -1413,7 +1557,7 @@ function generarPDF() {
     </style>
     </head><body>
     <h1>Plan Nutricional</h1>
-    <div class="subtitle">Paciente: ${nombre} · Generado con NutriCopilot</div>
+    <div class="subtitle">Paciente: ${nombre} · Generado con Nutripilot</div>
     ${contenido}
     <script>window.onload = () => { window.print(); }<\/script>
     </body></html>
