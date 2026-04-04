@@ -804,6 +804,33 @@
     cursor: pointer; padding: 4px;
   }
   .modal-skip:hover { color: #6b7280; }
+ 
+  /* ── BANNER EJEMPLO DEMO ── */
+  .demo-example-banner {
+    display: none;
+    background: linear-gradient(135deg, #fffbeb, #fef3c7);
+    border: 1.5px solid #fcd34d;
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 4px;
+    align-items: center;
+    gap: 12px;
+  }
+  .demo-example-banner.show { display: flex; }
+  .demo-example-icon { font-size: 1.4rem; flex-shrink: 0; }
+  .demo-example-text { flex: 1; }
+  .demo-example-text strong {
+    display: block; font-size: 0.82rem; font-weight: 700;
+    color: #92400e; text-transform: uppercase; letter-spacing: 0.05em;
+    margin-bottom: 2px;
+  }
+  .demo-example-text span { font-size: 0.8rem; color: #78350f; line-height: 1.5; }
+  .demo-example-badge {
+    background: #f59e0b; color: white;
+    font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.07em; padding: 3px 9px; border-radius: 20px;
+    flex-shrink: 0; white-space: nowrap;
+  }
 </style>
 </head>
 <body>
@@ -1204,6 +1231,16 @@
  
     <!-- Results -->
     <div id="results">
+ 
+      <!-- Banner ejemplo demo (solo modo prueba) -->
+      <div class="demo-example-banner" id="demo-example-banner">
+        <div class="demo-example-icon">🧪</div>
+        <div class="demo-example-text">
+          <strong>Esto es solo un ejemplo ilustrativo</strong>
+          <span>Este plan fue generado con datos de muestra, <b>no por IA</b>. El plan real será 100% personalizado para cada paciente.</span>
+        </div>
+        <div class="demo-example-badge">Demo</div>
+      </div>
  
  
  
@@ -1756,11 +1793,15 @@ async function generarPlan() {
     document.getElementById('results').classList.add('visible');
     document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
  
+    // Banner de ejemplo solo en modo demo
+    const demoBanner = document.getElementById('demo-example-banner');
+    if (demoBanner) demoBanner.classList.toggle('show', !window._esAdmin);
+ 
     // Mostrar modal de conversión si es demo
     if (!window._esAdmin) {
       setTimeout(() => {
         document.getElementById('modal-demo').classList.add('show');
-      }, 1800);
+      }, 60000);
     }
  
     // Mostrar acciones admin si aplica
