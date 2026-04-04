@@ -684,6 +684,62 @@
     display: flex; justify-content: center; gap: 24px; flex-wrap: wrap;
   }
   .pricing-footer span { display: flex; align-items: center; gap: 5px; }
+ 
+  /* ── MODO CLÍNICO ADMIN ── */
+  .modo-clinico #landing-top,
+  .modo-clinico section.pricing,
+  .modo-clinico #demo-banner,
+  .modo-clinico .hero { display: none !important; }
+  .modo-clinico header#app-herramienta { top: 0; border-bottom: 2px solid #22C55E; }
+  .modo-clinico .main-wrap { padding-top: 20px; }
+ 
+  .clinico-header-bar {
+    display: none; background: linear-gradient(135deg, #0f2414, #1a3a1f);
+    color: white; padding: 0 28px; height: 58px;
+    align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 400;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.25);
+  }
+  .modo-clinico .clinico-header-bar { display: flex; }
+  .clinico-header-left { display: flex; align-items: center; gap: 14px; }
+  .clinico-logo-wrap { display: flex; align-items: center; gap: 9px; }
+  .clinico-logo-text { font-family: 'DM Serif Display', serif; font-size: 1.15rem; color: white; }
+  .clinico-logo-text span { color: #4ade80; }
+  .clinico-badge {
+    background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.35);
+    color: #4ade80; font-size: 0.67rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em; padding: 3px 10px; border-radius: 20px;
+  }
+  .clinico-separator { width: 1px; height: 24px; background: rgba(255,255,255,0.15); }
+  .clinico-user { font-size: 0.78rem; color: rgba(255,255,255,0.55); display: flex; align-items: center; gap: 5px; }
+  .clinico-user strong { color: white; }
+  .clinico-header-right { display: flex; align-items: center; gap: 12px; }
+  .btn-clinico-logout {
+    background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.65);
+    border: 1px solid rgba(255,255,255,0.15); border-radius: 7px;
+    padding: 5px 14px; font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-clinico-logout:hover { background: rgba(239,68,68,0.2); color: #fca5a5; border-color: rgba(239,68,68,0.3); }
+ 
+  .clinico-welcome {
+    display: none; background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    border: 1px solid #bbf7d0; border-radius: var(--radius);
+    padding: 18px 22px; margin-bottom: 16px; align-items: center; gap: 14px;
+  }
+  .modo-clinico .clinico-welcome { display: flex; }
+  .clinico-welcome-icon { font-size: 1.8rem; flex-shrink: 0; }
+  .clinico-welcome-text h3 { font-family: 'DM Serif Display', serif; font-size: 1rem; color: var(--charcoal); margin-bottom: 2px; }
+  .clinico-welcome-text p { font-size: 0.8rem; color: var(--mid-gray); }
+ 
+  .clinico-stats { display: none; gap: 10px; margin-bottom: 16px; }
+  .modo-clinico .clinico-stats { display: flex; }
+  .clinico-stat-pill {
+    background: white; border: 1px solid var(--light-gray); border-radius: 10px;
+    padding: 10px 16px; flex: 1; text-align: center; box-shadow: var(--card-shadow);
+  }
+  .clinico-stat-pill strong { display: block; font-family: 'DM Serif Display', serif; font-size: 1.3rem; color: var(--charcoal); }
+  .clinico-stat-pill span { font-size: 0.7rem; color: var(--mid-gray); }
 </style>
 </head>
 <body>
@@ -691,6 +747,26 @@
 <!-- ══ DEMO BANNER ══ -->
 <div id="demo-banner">
   💰 Más pacientes, menos tiempo &nbsp;·&nbsp; <span>Activa tu acceso hoy</span>
+</div>
+ 
+<!-- ══ HEADER CLÍNICO (solo admin) ══ -->
+<div class="clinico-header-bar" id="clinico-header">
+  <div class="clinico-header-left">
+    <div class="clinico-logo-wrap">
+      <svg width="32" height="32" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="36" height="36" rx="8" fill="#1b3a22"/>
+        <polyline points="9,27 9,9 21,27 21,9" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <path d="M21 9 C23 4 30 5 29 12 C26 11 22 14 21 9Z" fill="#4ade80"/>
+      </svg>
+      <span class="clinico-logo-text">Nutri<span>pilot</span></span>
+    </div>
+    <div class="clinico-separator"></div>
+    <div class="clinico-badge">⚕ Panel Clínico</div>
+  </div>
+  <div class="clinico-header-right">
+    <div class="clinico-user">Sesión: <strong>Admin</strong></div>
+    <button class="btn-clinico-logout" onclick="cerrarSesion()">Cerrar sesión</button>
+  </div>
 </div>
  
 <div id="app-wrapper">
@@ -702,7 +778,14 @@
   <nav class="landing-nav">
     <div class="landing-nav-inner">
       <div class="nav-logo">
-        <div class="nav-logo-icon">🥗</div>
+        <div class="nav-logo-icon" style="background:none;padding:0;width:auto;height:auto;"><svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
+  <rect width="36" height="36" rx="8" fill="#1b3a22"/>
+  <!-- N blanca: palo izq, diagonal, palo der -->
+  <polyline points="9,27 9,9 21,27 21,9" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Hoja verde en punta superior derecha de la N -->
+  <path d="M21 9 C23 4 30 5 29 12 C26 11 22 14 21 9Z" fill="#4ade80"/>
+  <path d="M21 9 C24 10 27 8 29 12" stroke="#22c55e" stroke-width="0.8" fill="none"/>
+</svg></div>
         <span class="nav-logo-text">Nutri<span>pilot</span></span>
       </div>
       <a href="#app-herramienta" class="btn-nav-cta" onclick="document.getElementById('app-herramienta').scrollIntoView({behavior:'smooth'}); return false;">
@@ -855,7 +938,14 @@
 <header id="app-herramienta">
   <div class="header-inner">
     <a class="logo" href="#">
-      <div class="logo-icon">🥗</div>
+      <div class="logo-icon" style="background:none;padding:0;width:auto;height:auto;"><svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
+  <rect width="36" height="36" rx="8" fill="#1b3a22"/>
+  <!-- N blanca: palo izq, diagonal, palo der -->
+  <polyline points="9,27 9,9 21,27 21,9" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Hoja verde en punta superior derecha de la N -->
+  <path d="M21 9 C23 4 30 5 29 12 C26 11 22 14 21 9Z" fill="#4ade80"/>
+  <path d="M21 9 C24 10 27 8 29 12" stroke="#22c55e" stroke-width="0.8" fill="none"/>
+</svg></div>
       <span class="logo-text">Nutri<span>pilot</span></span>
     </a>
     <div class="header-right">
@@ -885,6 +975,32 @@
  
   <!-- FORM COLUMN -->
   <div>
+ 
+    <!-- Bienvenida clínica (solo admin) -->
+    <div class="clinico-welcome">
+      <div class="clinico-welcome-icon">🩺</div>
+      <div class="clinico-welcome-text">
+        <h3>Centro de mando clínico</h3>
+        <p>Ingresa los datos del paciente para generar su plan nutricional personalizado con IA.</p>
+      </div>
+    </div>
+ 
+    <!-- Stats rápidos (solo admin) -->
+    <div class="clinico-stats">
+      <div class="clinico-stat-pill">
+        <strong>⚡</strong>
+        <span>Plan en ~30 seg</span>
+      </div>
+      <div class="clinico-stat-pill">
+        <strong>5</strong>
+        <span>Días de menú</span>
+      </div>
+      <div class="clinico-stat-pill">
+        <strong>IA</strong>
+        <span>100% personalizado</span>
+      </div>
+    </div>
+ 
     <div class="card">
  
       <!-- LOGIN PANEL -->
@@ -1164,15 +1280,20 @@ function intentarLogin() {
     window._esAdmin = !USUARIOS_DEMO.includes(userKey);
     document.getElementById('login-panel').style.display = 'none';
     document.getElementById('form-panel').style.display = 'block';
-    document.getElementById('demo-banner').classList.add('show');
     document.getElementById('results-col').style.display = 'block';
-    // Mostrar campo WhatsApp y acciones solo para admin
+ 
     if (window._esAdmin) {
+      // Modo clínico: ocultar toda la landing y mostrar panel limpio
+      document.body.classList.add('modo-clinico');
+      document.getElementById('clinico-header').style.display = 'flex';
       document.getElementById('campo-whatsapp').style.display = 'flex';
-    }
-    // Solo mostrar aviso demo si es usuario de prueba
-    if (USUARIOS_DEMO.includes(userKey)) {
+      // Scroll al top para mostrar el panel clínico
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      // Demo: mostrar banner y aviso
+      document.getElementById('demo-banner').classList.add('show');
       document.getElementById('demo-notice').style.display = 'block';
+      document.getElementById('app-herramienta').scrollIntoView({ behavior: 'smooth' });
     }
   } else {
     err.classList.add('show');
@@ -1192,6 +1313,11 @@ function cerrarSesion() {
   document.getElementById('login-user').value = '';
   document.getElementById('login-pass').value = '';
   document.getElementById('login-error').classList.remove('show');
+  // Limpiar modo clínico
+  document.body.classList.remove('modo-clinico');
+  document.getElementById('clinico-header').style.display = 'none';
+  window._esAdmin = false;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
  
 document.addEventListener('keydown', function(e) {
@@ -1439,14 +1565,55 @@ async function generarPlan() {
   document.getElementById('empty-state').style.display = 'none';
  
   try {
-    const res = await fetch('/api/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, edad, peso, estatura, sexo, objetivo, actividad, presupuesto, restricciones, calorias, imc })
-    });
+    let data;
  
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
+    if (!window._esAdmin) {
+      // ── MODO DEMO: datos estáticos, sin llamar a la API ──
+      await new Promise(r => setTimeout(r, 900));
+      const plan = PLANES[objetivo]?.[presupuesto] || PLANES.bajar.bajo;
+      const shop = SHOPPING[objetivo]?.[presupuesto] || SHOPPING.bajar.bajo;
+      const tips = TIPS[objetivo] || TIPS.bajar;
+      const dias = ['Lunes','Martes','Miércoles','Jueves','Viernes'];
+      const shares = objetivo === 'bajar' ? {p:0.30,c:0.40,f:0.30} : objetivo === 'muscular' ? {p:0.35,c:0.40,f:0.25} : {p:0.30,c:0.35,f:0.35};
+      const proteina      = Math.round((calorias * shares.p) / 4);
+      const carbohidratos = Math.round((calorias * shares.c) / 4);
+      const grasas        = Math.round((calorias * shares.f) / 9);
+      const plan_semanal  = {};
+      dias.forEach((dia, i) => {
+        plan_semanal[dia] = {
+          desayuno:  plan.desayuno[i  % plan.desayuno.length],
+          comida:    plan.comida[i    % plan.comida.length],
+          cena:      plan.cena[i      % plan.cena.length],
+          colacion1: plan.colacion1[i % plan.colacion1.length],
+          colacion2: plan.colacion2[i % plan.colacion2.length],
+        };
+      });
+      const lista_super = {
+        proteinas:       shop['proteinas']       || shop['proteínas']  || [],
+        carbohidratos:   shop['carbohidratos']   || [],
+        frutas_verduras: shop['frutas_verduras'] || [],
+        lacteos:         shop['lacteos']          || shop['lácteos']   || [],
+        extras:          shop['extras']           || [],
+      };
+      data = {
+        macros: { calorias, proteina, carbohidratos, grasas },
+        icc: null,
+        plan_semanal,
+        lista_super,
+        tips,
+        mensaje_whatsapp: `Hola ${nombre} 👋\n\nAquí está tu plan de ejemplo:\n🔥 Calorías: ${calorias} kcal/día\n💪 Proteína: ${proteina}g · 🌾 Carbs: ${carbohidratos}g · 🥑 Grasas: ${grasas}g\n\n¡Cualquier duda estoy aquí! 🌿`,
+        composicionCorporal: null,
+      };
+    } else {
+      // ── MODO ADMIN: llamar a la API real con IA ──
+      const res = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, edad, peso, estatura, sexo, objetivo, actividad, presupuesto, restricciones, calorias, imc })
+      });
+      data = await res.json();
+      if (data.error) throw new Error(data.error);
+    }
  
     document.getElementById('loading').classList.remove('active');
  
